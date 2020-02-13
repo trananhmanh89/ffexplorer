@@ -1,0 +1,6 @@
+{
+    "require-dev": {
+        "joomla/archive": "^1.1",
+        "joomla/filesystem": "^1.5"
+    }
+}
