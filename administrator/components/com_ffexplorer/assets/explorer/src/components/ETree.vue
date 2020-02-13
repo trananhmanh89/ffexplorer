@@ -230,7 +230,10 @@ export default {
         },
 
         openFile() {
-            EventBus.$emit('openFileEditor', this.contextItem);
+            EventBus.$emit('openFileEditor', {
+                item: this.contextItem,
+                force: true
+            });
         },
 
         renameFile() {

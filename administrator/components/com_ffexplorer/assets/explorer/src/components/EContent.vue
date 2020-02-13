@@ -12,6 +12,7 @@
                 :class="{active: file.path === current}"
                 :title="file.path"
                 @click="open(file)"
+                @mouseup.middle="removeFile(file.path)"
             >
                 <div class="is-dirty" v-if="file.status === 'dirty'">•</div>
                 <div class="tab-item-title">{{file.name}}</div>
@@ -62,25 +63,25 @@ export default {
     },
 
     mounted() {
-        EventBus.$on("openFileEditor", data => {
-            if (this.files.find(file => file.path === data.path)) {
+        EventBus.$on("openFileEditor", ({item, force}) => {
+            if (this.files.find(file => file.path === item.path)) {
             } else {
                 this.files.push({
-                    name: data.name,
-                    path: data.path,
+                    name: item.name,
+                    path: item.path,
                     status: 'normal',
                 });
             }
 
-            this.current = data.path;
-            this.open(data);
+            this.current = item.path;
+            this.open(item, force);
         });
     },
 
     methods: {
-        open(file) {
+        open(file, force) {
             this.current = file.path;
-            this.$refs.editor.initEditor(file.path);
+            this.$refs.editor.initEditor(file.path, force);
         },
 
         removeFile(path) {
@@ -138,7 +139,7 @@ export default {
             svg.fa-times {
                 width: 10px;
                 height: 10px;
-                margin-left: 3px;
+                margin-left: 5px;
                 opacity: 0.7;
 
                 &:hover {

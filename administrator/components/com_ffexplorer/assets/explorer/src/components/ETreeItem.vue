@@ -61,7 +61,10 @@ export default {
                 return;
             }
 
-            EventBus.$emit('openFileEditor', this.item);
+            EventBus.$emit('openFileEditor', {
+                item: this.item,
+                force: true
+            });
         },
 
         onClick() {

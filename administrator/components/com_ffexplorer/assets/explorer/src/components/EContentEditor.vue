@@ -26,10 +26,12 @@ export default {
         setTimeout(() => {
             this.computeEditorHeight()
         });
+
+        this.createEditor();
     },
 
     methods: {
-        async initEditor(path) {
+        async initEditor(path, force) {
             if (!editor) {
                 await this.createEditor();
             }
@@ -39,7 +41,7 @@ export default {
                 eData[this.current].state = editor.saveViewState();
             }
 
-            if (!eData[path]) {
+            if (!eData[path] || force) {
                 const {data} = await this.getFileContent(path);
                 const model = monaco.editor.createModel(data.content, data.language);
 
@@ -58,10 +60,19 @@ export default {
                         path,
                     });
                 });
+
+                this.emitEditorStatus({
+                    status: 'normal', 
+                    path,
+                });
             }
             
             editor.setModel(eData[path].model);
             editor.restoreViewState(eData[path].state);
+            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, function() {
+                console.log(path);
+            });
+
             editor.focus();
             
             this.current = path;
@@ -92,9 +103,12 @@ export default {
         createEditor() {
             return new Promise((resolve, reject) => {
                 window.require(['vs/editor/editor.main'], () => {
-                    editor = monaco.editor.create(this.$el, {
-                        model: null,
-                    });
+                    if (!editor) {
+                        editor = monaco.editor.create(this.$el, {
+                            model: null,
+                        });
+                    }
+
                     resolve();
                 });
             });
