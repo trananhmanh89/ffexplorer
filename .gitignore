@@ -1,0 +1,27 @@
+# global
+_temp.*
+package-lock.json
+composer.lock
+node_modules
+
+/*
+
+# files and folders
+!/.gitignore
+!/administrator
+/administrator/*
+!/administrator/components/
+/administrator/components/*
+!/administrator/components/com_ffexplorer
+
+!/administrator/language/
+/administrator/language/*
+!/administrator/language/en-GB/
+/administrator/language/en-GB/*
+!/administrator/language/en-GB/en-GB.com_ffexplorer.ini
+!/administrator/language/en-GB/en-GB.com_ffexplorer.sys.ini
+
+!/build
+/build/*
+!/build/build.php
+!/build/composer.json
