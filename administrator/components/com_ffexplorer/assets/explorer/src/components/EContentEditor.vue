@@ -29,43 +29,47 @@ export default {
     },
 
     methods: {
-        async initEditor(file) {
+        async initEditor(path) {
             if (!editor) {
                 await this.createEditor();
             }
 
             if (this.current) {
-                const currentData = {
-                    model: editor.getModel(),
-                    state: editor.saveViewState(),
-                };
-
-                eData[this.current] = currentData;
+                eData[this.current].model = editor.getModel();
+                eData[this.current].state = editor.saveViewState();
             }
 
-            if (!eData[file]) {
-                const {data} = await this.getFileContent(file);
+            if (!eData[path]) {
+                const {data} = await this.getFileContent(path);
                 const model = monaco.editor.createModel(data.content, data.language);
 
-                eData[file] = {
+                eData[path] = {
                     model: model,
                     state: {},
                     lastSaved: model.getAlternativeVersionId(),
                 };
 
                 model.onDidChangeContent(() => {
-                    const {lastSaved} = eData[file];
-                    const dirty = lastSaved !== model.getAlternativeVersionId();
+                    const {lastSaved} = eData[path];
+                    const status = lastSaved === model.getAlternativeVersionId() ? 'normal' : 'dirty';
 
-                    this.$emit('dirty', {dirty, file});
+                    this.emitEditorStatus({
+                        status, 
+                        path,
+                    });
                 });
             }
             
-            editor.setModel(eData[file].model);
-            editor.restoreViewState(eData[file].state);
+            editor.setModel(eData[path].model);
+            editor.restoreViewState(eData[path].state);
+            editor.focus();
             
-            this.current = file;
+            this.current = path;
         },
+
+        emitEditorStatus: debounce(function(payload) {
+            this.$emit('statusChange', payload);
+        }, 100),
 
         getFileContent(file) {
             return new Promise((resolve, reject) => {

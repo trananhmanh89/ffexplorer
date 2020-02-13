@@ -13,6 +13,7 @@
                 :title="file.path"
                 @click="open(file)"
             >
+                <div class="is-dirty" v-if="file.status === 'dirty'">•</div>
                 <div class="tab-item-title">{{file.name}}</div>
                 <svg 
                     aria-hidden="true" 
@@ -34,7 +35,7 @@
         <EContentEditor 
             ref="editor"
             @removeFile="removeFile"
-            @dirty="onDirty" />
+            @statusChange="onStatusChange" />
     </div>
 </template>
 
@@ -67,7 +68,7 @@ export default {
                 this.files.push({
                     name: data.name,
                     path: data.path,
-                    dirty: false,
+                    status: 'normal',
                 });
             }
 
@@ -95,9 +96,12 @@ export default {
             }
         },
 
-        onDirty({dirty, file}) {
-            console.log(dirty);
-            console.log(file);
+        onStatusChange({status, path}) {
+            const file = this.files.find(file => file.path === path);
+
+            if (file) {
+                file.status = status;
+            }
         }
     }
 }
@@ -116,16 +120,30 @@ export default {
         display: flex;
 
         .e-content-tab-item {
+            position: relative;
             margin: 0 5px;
             padding: 0 5px;
-            cursor: pointer;
             display: flex;
+            cursor: pointer;
+            user-select: none;
+
+            .is-dirty {
+                position: absolute;
+                top: -8px;
+                left: -2px;
+                color: #ff0000;
+                font-size: 18px;
+            }
 
             svg.fa-times {
                 width: 10px;
                 height: 10px;
                 margin-left: 3px;
                 opacity: 0.7;
+
+                &:hover {
+                    outline: solid 1px;
+                }
             }
 
             &:hover svg{

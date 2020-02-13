@@ -2765,16 +2765,28 @@
     display: flex;
 }
 .e-content .e-content-tabs .e-content-tab-item {
+      position: relative;
       margin: 0 5px;
       padding: 0 5px;
-      cursor: pointer;
       display: flex;
+      cursor: pointer;
+      user-select: none;
+}
+.e-content .e-content-tabs .e-content-tab-item .is-dirty {
+        position: absolute;
+        top: -8px;
+        left: -2px;
+        color: #ff0000;
+        font-size: 18px;
 }
 .e-content .e-content-tabs .e-content-tab-item svg.fa-times {
         width: 10px;
         height: 10px;
         margin-left: 3px;
         opacity: 0.7;
+}
+.e-content .e-content-tabs .e-content-tab-item svg.fa-times:hover {
+          outline: solid 1px;
 }
 .e-content .e-content-tabs .e-content-tab-item:hover svg {
         visibility: visible !important;
