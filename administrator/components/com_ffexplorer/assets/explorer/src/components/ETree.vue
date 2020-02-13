@@ -59,7 +59,6 @@ export default {
             }],
             treeHeight: '0px',
             contextItem: {},
-            fetching: false,
         }
     },
 
@@ -231,31 +230,7 @@ export default {
         },
 
         openFile() {
-            if (this.fetching) {
-                return;
-            }
-
-            this.fetching = true;
-
-            this.$ajax({
-                task: 'explorer.openFile',
-                path: this.contextItem.path,
-            })
-            .then(res => {
-                this.fetching = false;
-
-                if (res && res.data) {
-                    EventBus.$emit('openFileEditor', res.data);
-                } else if (res && res.error) {
-                    alert(res.error);
-                } else {
-                    alert('Could not open this file');
-                }
-            })
-            .catch(error => {
-                this.fetching = false;
-                console.log(error);
-            });
+            EventBus.$emit('openFileEditor', this.contextItem);
         },
 
         renameFile() {

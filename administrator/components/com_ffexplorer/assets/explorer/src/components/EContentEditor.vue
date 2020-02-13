@@ -88,7 +88,9 @@ export default {
         createEditor() {
             return new Promise((resolve, reject) => {
                 window.require(['vs/editor/editor.main'], () => {
-                    editor = monaco.editor.create(this.$el, { model: null });
+                    editor = monaco.editor.create(this.$el, {
+                        model: null,
+                    });
                     resolve();
                 });
             });
