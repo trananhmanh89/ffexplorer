@@ -13,6 +13,10 @@
 	<administration>
 		<files folder="admin">
 			<filename>ffexplorer.php</filename>
+			<filename>controller.php</filename>
+			<folder>assets</folder>
+			<folder>controllers</folder>
+			<folder>views</folder>
 		</files>
 		<menu link="index.php?option=com_ffexplorer">COM_FFEXPLORER_MENU</menu>
 	</administration>
