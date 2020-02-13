@@ -38,6 +38,7 @@ class FfexplorerControllerExplorer extends BaseController
             'html' => 'html',
             'svg' => 'html',
             'json' => 'json',
+            'md' => 'markdown',
         );
 
         $language = isset($languages[$ext]) ? $languages[$ext] : '';
