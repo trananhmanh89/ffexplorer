@@ -42,7 +42,7 @@ $languages = array(
 foreach ($languages as $lang) {
     $contents[] = array(
         'name' => 'admin/language/' . $lang,
-        'data' => JPATH_ROOT . '/administrator/language/en-GB/' . $lang
+        'data' => file_get_contents(JPATH_ROOT . '/administrator/language/en-GB/' . $lang)
     );
 }
 

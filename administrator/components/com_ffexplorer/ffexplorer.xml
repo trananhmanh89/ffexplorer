@@ -8,7 +8,7 @@
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
 	<version>1.0.0</version>
-	<description>COM_FFEXPLORER</description>
+	<description>Funfis Explorer</description>
 
 	<administration>
 		<files folder="admin">
@@ -19,9 +19,10 @@
 			<folder>views</folder>
 		</files>
 		<menu link="index.php?option=com_ffexplorer">COM_FFEXPLORER_MENU</menu>
+
+		<languages folder="admin/language">
+			<language tag="en-GB">en-GB.com_ffexplorer.ini</language>
+			<language tag="en-GB">en-GB.com_ffexplorer.sys.ini</language>
+		</languages>
 	</administration>
-	<languages folder="admin/language">
-		<language tag="en-GB">en-GB.com_ffexplorer.ini</language>
-		<language tag="en-GB">en-GB.com_ffexplorer.sys.ini</language>
-	</languages>
 </extension>
