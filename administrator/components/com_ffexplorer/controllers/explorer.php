@@ -36,6 +36,7 @@ class FfexplorerControllerExplorer extends BaseController
             'ini' => 'ini',
             'xml' => 'xml',
             'html' => 'html',
+            'svg' => 'html',
             'json' => 'json',
         );
 
