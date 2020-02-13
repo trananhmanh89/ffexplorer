@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.1" method="upgrade">
+	<name>COM_FFEXPLORER</name>
+	<author>Joomla! Project</author>
+	<creationDate>December 2013</creationDate>
+	<copyright>(C) 2005 - 2019 Open Source Matters. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>admin@joomla.org</authorEmail>
+	<authorUrl>www.joomla.org</authorUrl>
+	<version>1.0.0</version>
+	<description>COM_FFEXPLORER</description>
+
+	<administration>
+		<files folder="admin">
+			<filename>ffexplorer.php</filename>
+		</files>
+		<menu link="index.php?option=com_ffexplorer">COM_FFEXPLORER_MENU</menu>
+	</administration>
+	<languages folder="admin/language">
+		<language tag="en-GB">en-GB.com_ffexplorer.ini</language>
+		<language tag="en-GB">en-GB.com_ffexplorer.sys.ini</language>
+	</languages>
+</extension>
