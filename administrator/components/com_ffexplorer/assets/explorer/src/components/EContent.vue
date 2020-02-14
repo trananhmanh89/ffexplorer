@@ -116,7 +116,7 @@ export default {
     overflow: hidden;
 
     .e-content-tabs {
-        min-height: 16px;
+        min-height: 40px;
         line-height: 15px;
         display: flex;
 

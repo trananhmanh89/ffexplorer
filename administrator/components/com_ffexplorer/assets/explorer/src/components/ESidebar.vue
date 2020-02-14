@@ -1,6 +1,6 @@
 <template>
     <div class="e-sidebar">
-        <h4>Explorer</h4>
+        <div class="e-sidebar-header">Explorer</div>
         <ETree />
     </div>
 </template>
@@ -15,9 +15,16 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .e-sidebar {
     width: 300px;
+
+    .e-sidebar-header {
+        min-height: 40px;
+        font-size: 14px;
+        line-height: 40px;
+        font-weight: bold;
+    }
 }
 
 </style>

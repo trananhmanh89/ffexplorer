@@ -2748,6 +2748,12 @@
 .e-sidebar {
   width: 300px;
 }
+.e-sidebar .e-sidebar-header {
+    min-height: 40px;
+    font-size: 14px;
+    line-height: 40px;
+    font-weight: bold;
+}
 
 .e-content-editor {
   border: solid 1px #ddd;
@@ -2759,7 +2765,7 @@
   overflow: hidden;
 }
 .e-content .e-content-tabs {
-    min-height: 16px;
+    min-height: 40px;
     line-height: 15px;
     display: flex;
 }
