@@ -23,11 +23,13 @@ export default {
             this.resizeEditorLayout();
         });
 
-        setTimeout(() => {
-            this.computeEditorHeight()
+        this.createEditor().then(() => {
+            this.resizeEditorLayout();
         });
 
-        this.createEditor();
+        setTimeout(() => {
+            this.computeEditorHeight();
+        });
     },
 
     methods: {
