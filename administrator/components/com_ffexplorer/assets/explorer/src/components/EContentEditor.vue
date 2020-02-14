@@ -111,10 +111,7 @@ export default {
                     path,
                 })
                 .then(res => {
-                    setTimeout(() => {
-                        
-                        resolve(res);
-                    }, 1000);
+                    resolve(res);
                 })
                 .catch(error => {
                     reject(error);
