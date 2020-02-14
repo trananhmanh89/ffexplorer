@@ -53,52 +53,46 @@ export default {
                 };
 
                 model.onDidChangeContent(() => {
-                    const {lastSaved} = eData[path];
-                    const status = lastSaved === model.getAlternativeVersionId() ? 'normal' : 'dirty';
+                    const {lastSaved, saving} = eData[path];
+                    if (saving) {
+                        return;
+                    }
 
-                    this.emitEditorStatus({
-                        status, 
-                        path,
-                    });
+                    this.emitEditorStatus(eData[path], path);
                 });
 
-                this.emitEditorStatus({
-                    status: 'normal', 
-                    path,
-                });
+                this.emitEditorStatus(eData[path], path);
             }
             
             editor.setModel(eData[path].model);
             editor.restoreViewState(eData[path].state);
             editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
-                const currentModel = eData[path];
+                const currentData = eData[path];
 
-                if (currentModel.saving) {
+                if (currentData.saving) {
                     return;
                 }
 
-                currentModel.saving = true;
+                currentData.saving = true;
+                const tmpSaved = currentData.model.getAlternativeVersionId();
 
-                this.emitEditorStatus({
-                    status: 'saving',
-                    path,
-                });
+                this.emitEditorStatus(currentData, path);
 
                 const content = editor.getValue();
+
                 this.saveContent(path, content).then(res => {
-                    currentModel.saving = false;
+                    currentData.saving = false;
 
                     if (res.error) {
                         alert(res.error)
                     } else {
-                        this.emitEditorStatus({
-                            status: 'normal',
-                            path,
-                        });
+                        currentData.lastSaved = tmpSaved;
                     }
+
+                    this.emitEditorStatus(currentData, path);
                 })
                 .catch(error => {
-                    currentModel.saving = false;
+                    currentData.saving = false;
                     alert('save error');
                     console.log(error);
                 });
@@ -117,7 +111,10 @@ export default {
                     path,
                 })
                 .then(res => {
-                    resolve(res);
+                    setTimeout(() => {
+                        
+                        resolve(res);
+                    }, 1000);
                 })
                 .catch(error => {
                     reject(error);
@@ -125,8 +122,19 @@ export default {
             });
         },
 
-        emitEditorStatus: debounce(function(payload, timeout) {
-            this.$emit('statusChange', payload);
+        emitEditorStatus: debounce(function(data, path) {
+            let status;
+
+            if (data.saving) {
+                status = 'saving';
+            } else {
+                status = data.lastSaved === data.model.getAlternativeVersionId() ? 'normal' : 'dirty';
+            }
+
+            this.$emit('statusChange', {
+                status,
+                path,
+            });
         }, 100),
 
         getFileContent(file) {
@@ -135,9 +143,9 @@ export default {
                     task: 'explorer.openFile',
                     path: file
                 })
-                .then(data => {
-                    if (data) {
-                        resolve(data);
+                .then(res => {
+                    if (res) {
+                        resolve(res);
                     } else {
                         alert('Could not open this file');
                         this.$emit('removeFile', file);

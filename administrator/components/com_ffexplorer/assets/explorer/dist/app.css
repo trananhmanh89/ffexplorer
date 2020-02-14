@@ -2778,15 +2778,15 @@
 }
 .e-content .e-content-tabs .e-content-tab-item .file-status {
         position: absolute;
-        top: -8px;
-        left: -2px;
+        top: 8px;
+        left: 2px;
         font-size: 18px;
 }
 .e-content .e-content-tabs .e-content-tab-item .file-status.is-dirty {
           color: #ff0000;
 }
 .e-content .e-content-tabs .e-content-tab-item .file-status.is-saving {
-          color: #ffc107;
+          color: #9e9e9e;
 }
 .e-content .e-content-tabs .e-content-tab-item svg.fa-times {
         width: 10px;

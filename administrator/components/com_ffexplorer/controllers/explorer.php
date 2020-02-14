@@ -23,7 +23,7 @@ class FfexplorerControllerExplorer extends BaseController
             $this->response('error', 'file not existed');
         }
 
-        if (File::write($file, $content)) {
+        if (@File::write($file, $content)) {
             $this->response('success', 'saved');
         } else {
             $this->response('error', 'could not write file');

@@ -129,8 +129,8 @@ export default {
 
             .file-status {
                 position: absolute;
-                top: -8px;
-                left: -2px;
+                top: 8px;
+                left: 2px;
                 font-size: 18px;
 
                 &.is-dirty {
@@ -138,7 +138,7 @@ export default {
                 }
 
                 &.is-saving {
-                    color:#ffc107;
+                    color:#9e9e9e;
                 }
             }
 
