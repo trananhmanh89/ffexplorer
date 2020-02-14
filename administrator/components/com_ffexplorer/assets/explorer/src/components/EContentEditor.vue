@@ -49,6 +49,7 @@ export default {
                     model: model,
                     state: {},
                     lastSaved: model.getAlternativeVersionId(),
+                    saving: false,
                 };
 
                 model.onDidChangeContent(() => {
@@ -69,8 +70,38 @@ export default {
             
             editor.setModel(eData[path].model);
             editor.restoreViewState(eData[path].state);
-            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, function() {
-                console.log(path);
+            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
+                const currentModel = eData[path];
+
+                if (currentModel.saving) {
+                    return;
+                }
+
+                currentModel.saving = true;
+
+                this.emitEditorStatus({
+                    status: 'saving',
+                    path,
+                });
+
+                const content = editor.getValue();
+                this.saveContent(path, content).then(res => {
+                    currentModel.saving = false;
+
+                    if (res.error) {
+                        alert(res.error)
+                    } else {
+                        this.emitEditorStatus({
+                            status: 'normal',
+                            path,
+                        });
+                    }
+                })
+                .catch(error => {
+                    currentModel.saving = false;
+                    alert('save error');
+                    console.log(error);
+                });
             });
 
             editor.focus();
@@ -78,7 +109,23 @@ export default {
             this.current = path;
         },
 
-        emitEditorStatus: debounce(function(payload) {
+        saveContent(path, content) {
+            return new Promise((resolve, reject) => {
+                this.$ajax({
+                    task: 'explorer.saveContent',
+                    content,
+                    path,
+                })
+                .then(res => {
+                    resolve(res);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+            });
+        },
+
+        emitEditorStatus: debounce(function(payload, timeout) {
             this.$emit('statusChange', payload);
         }, 100),
 
@@ -96,6 +143,10 @@ export default {
                         this.$emit('removeFile', file);
                         this.resetEditor();
                     }
+                })
+                .catch(error => {
+                    alert('error');
+                    console.log(error);
                 });
             });
         },

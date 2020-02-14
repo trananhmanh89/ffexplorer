@@ -14,7 +14,8 @@
                 @click="open(file)"
                 @mouseup.middle="removeFile(file.path)"
             >
-                <div class="is-dirty" v-if="file.status === 'dirty'">•</div>
+                <div class="file-status is-saving" v-if="file.status === 'saving'">•</div>
+                <div class="file-status is-dirty" v-if="file.status === 'dirty'">•</div>
                 <div class="tab-item-title">{{file.name}}</div>
                 <svg 
                     aria-hidden="true" 
@@ -128,12 +129,19 @@ export default {
             cursor: pointer;
             user-select: none;
 
-            .is-dirty {
+            .file-status {
                 position: absolute;
                 top: -8px;
                 left: -2px;
-                color: #ff0000;
                 font-size: 18px;
+
+                &.is-dirty {
+                    color: #ff0000;
+                }
+
+                &.is-saving {
+                    color:#ffc107;
+                }
             }
 
             svg.fa-times {

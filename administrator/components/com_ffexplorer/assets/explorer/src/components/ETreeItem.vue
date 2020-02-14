@@ -91,6 +91,7 @@ export default {
                 })
                 .catch(error => {
                     this.fetching = false;
+                    alert('error');
                     console.log(error);
                 });
             }

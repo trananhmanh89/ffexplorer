@@ -2772,12 +2772,17 @@
       cursor: pointer;
       user-select: none;
 }
-.e-content .e-content-tabs .e-content-tab-item .is-dirty {
+.e-content .e-content-tabs .e-content-tab-item .file-status {
         position: absolute;
         top: -8px;
         left: -2px;
-        color: #ff0000;
         font-size: 18px;
+}
+.e-content .e-content-tabs .e-content-tab-item .file-status.is-dirty {
+          color: #ff0000;
+}
+.e-content .e-content-tabs .e-content-tab-item .file-status.is-saving {
+          color: #ffc107;
 }
 .e-content .e-content-tabs .e-content-tab-item svg.fa-times {
         width: 10px;
