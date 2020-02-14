@@ -135,6 +135,8 @@ class FfexplorerControllerExplorer extends BaseController
         $name = $this->input->getString('name');
         $path = $this->input->getString('path');
 
+        $name = File::makeSafe($name);
+
         if (!$name || !$path) {
             die(json_encode(array('error' => 'empty')));
         }
@@ -157,6 +159,8 @@ class FfexplorerControllerExplorer extends BaseController
 
         $name = $this->input->getString('name');
         $path = $this->input->getString('path');
+        
+        $name = Folder::makeSafe($name);
 
         if (!$name || !$path) {
             die(json_encode(array('error' => 'empty')));
@@ -180,6 +184,8 @@ class FfexplorerControllerExplorer extends BaseController
 
         $newName = $this->input->getString('newName');
         $oldPath = $this->input->getString('oldPath');
+
+        $newName = FOlder::makeSafe($newName);
 
         if (!$newName || !$oldPath) {
             $this->response('error', 'empty');
@@ -230,6 +236,8 @@ class FfexplorerControllerExplorer extends BaseController
         $newName = $this->input->getString('newName');
         $oldPath = $this->input->getString('oldPath');
 
+        $newName = File::makeSafe($newName);
+
         if (!$newName || !$oldPath) {
             $this->response('error', 'empty');
         }
@@ -246,7 +254,9 @@ class FfexplorerControllerExplorer extends BaseController
 
         $result = rename( JPATH_ROOT . $oldPath, $file);
         if ($result) {
-            $this->response('success', 'File name changed to ' . $file);
+            $this->response('file', array(
+                'path' => $file,
+            ));
         } else {
             $this->response('error', 'rename error');
         }
