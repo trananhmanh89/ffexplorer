@@ -116,18 +116,16 @@ export default {
     overflow: hidden;
 
     .e-content-tabs {
-        margin: 12px 0;
         min-height: 16px;
         line-height: 15px;
         display: flex;
 
         .e-content-tab-item {
             position: relative;
-            margin: 0 5px;
-            padding: 0 5px;
+            padding: 12px 10px;
             display: flex;
-            cursor: pointer;
             user-select: none;
+            cursor: pointer;
 
             .file-status {
                 position: absolute;
@@ -155,12 +153,16 @@ export default {
                 }
             }
 
-            &:hover svg{
-                visibility: visible !important;
+            &:hover {
+                border-bottom: solid 1px rgb(199, 199, 199);
+
+                svg {
+                    visibility: visible !important;
+                }
             }
 
             &.active {
-                color: #409eff;
+                color: #409eff !important;
                 border-bottom: solid 1px #409eff;
             }
         }

@@ -2759,18 +2759,16 @@
   overflow: hidden;
 }
 .e-content .e-content-tabs {
-    margin: 12px 0;
     min-height: 16px;
     line-height: 15px;
     display: flex;
 }
 .e-content .e-content-tabs .e-content-tab-item {
       position: relative;
-      margin: 0 5px;
-      padding: 0 5px;
+      padding: 12px 10px;
       display: flex;
-      cursor: pointer;
       user-select: none;
+      cursor: pointer;
 }
 .e-content .e-content-tabs .e-content-tab-item .file-status {
         position: absolute;
@@ -2793,11 +2791,14 @@
 .e-content .e-content-tabs .e-content-tab-item svg.fa-times:hover {
           outline: solid 1px;
 }
+.e-content .e-content-tabs .e-content-tab-item:hover {
+        border-bottom: solid 1px #c7c7c7;
+}
 .e-content .e-content-tabs .e-content-tab-item:hover svg {
-        visibility: visible !important;
+          visibility: visible !important;
 }
 .e-content .e-content-tabs .e-content-tab-item.active {
-        color: #409eff;
+        color: #409eff !important;
         border-bottom: solid 1px #409eff;
 }
 .e-content .ghost {
