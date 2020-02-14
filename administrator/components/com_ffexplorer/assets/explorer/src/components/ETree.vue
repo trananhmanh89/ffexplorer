@@ -267,7 +267,7 @@ export default {
             }).then(({ value }) => {
                 this.$message({
                     type: 'success',
-                    message: 'Your file was change to' + value
+                    message: 'Success'
                 });
             }).catch(() => {});
         },

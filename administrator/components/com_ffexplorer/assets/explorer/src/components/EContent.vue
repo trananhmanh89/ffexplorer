@@ -88,11 +88,12 @@ export default {
         close(path) {
             const current = this.files.find(file => file.path === path);
             if (current.status === 'saving') {
+                alert('Saving. Can not close for now.')
                 return;
             }
 
             if (current.status === 'dirty') {
-                const ok = confirm("You haven't save yet. Do you to close without saving?");
+                const ok = confirm("Your content haven't save yet. Do you want to close without saving?");
                 if (!ok) {
                     return;
                 }
