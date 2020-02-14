@@ -8,6 +8,28 @@ defined('_JEXEC') or die('Restricted access');
 
 class FfexplorerControllerExplorer extends BaseController
 {
+    public function saveContent()
+    {
+        $this->checkToken();
+        $path = $this->input->getString('path');
+        $content = $this->input->get('content', '', 'raw');
+
+        if (!$path) {
+            $this->response('error', 'empty path');
+        }
+
+        $file = JPATH_ROOT . $path;
+        if (!File::exists($file)) {
+            $this->response('error', 'file not existed');
+        }
+
+        if (File::write($file, $content)) {
+            $this->response('success', 'saved');
+        } else {
+            $this->response('error', 'could not write file');
+        }
+    }
+
     public function openFile()
     {
         $this->checkToken();
@@ -69,7 +91,9 @@ class FfexplorerControllerExplorer extends BaseController
             return $item;
         }, $folders);
 
-        $files = Folder::files($path, '', false, true, array('.svn', 'CVS', '.DS_Store', '__MACOSX'), array('.*~'));
+        $exclude = array('.svn', 'CVS', '.DS_Store', '__MACOSX');
+        $excludefilter = array('.*~');
+        $files = Folder::files($path, '.', false, true, $exclude, $excludefilter);
         $files = array_map(function($file) {
             $file = realpath($file);
             $info = pathinfo($file);
@@ -81,6 +105,23 @@ class FfexplorerControllerExplorer extends BaseController
 
             return $item;
         }, $files);
+
+        uasort($files, function($a, $b) {
+            $aLeng = strlen($a->name);
+            $bLeng = strlen($b->name);
+
+            $max = max($aLeng, $bLeng);
+            for ($i=0; $i < $max; $i++) { 
+                $aSub = strtolower(substr($a->name, $i, 1));
+                $bSub = strtolower(substr($b->name, $i, 1));
+
+                if ($aSub !== $bSub) {
+                    return $aSub < $bSub ? -1 : 1;
+                }
+            }
+
+            return -1;
+        });
 
         $result = array_merge($folders, $files);
 
