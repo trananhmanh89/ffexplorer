@@ -13,7 +13,7 @@
         <ul v-show="isOpen" v-if="isFolder">
             <ETreeItem
                 v-for="child in item.children"
-                :key="child.name"
+                :key="child.path"
                 :item="child"
                 @addItem="$emit('addItem', $event)"
             />

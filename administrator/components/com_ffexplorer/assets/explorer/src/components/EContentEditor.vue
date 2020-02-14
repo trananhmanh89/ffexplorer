@@ -12,7 +12,7 @@ const eData = {};
 export default {
     data() {
         return {
-            editorHeight: '200px',
+            editorHeight: '0px',
             current: '',
         }
     },
@@ -27,7 +27,7 @@ export default {
             this.resizeEditorLayout();
         });
 
-        setTimeout(() => {
+        this.$nextTick(() => {
             this.computeEditorHeight();
         });
     },
@@ -143,12 +143,12 @@ export default {
                     path: file
                 })
                 .then(res => {
-                    if (res) {
-                        resolve(res);
-                    } else {
-                        alert('Could not open this file');
+                    if (res.error) {
+                        alert(res.error);
                         this.$emit('removeFile', file);
                         this.resetEditor();
+                    } else {
+                        resolve(res);
                     }
                 })
                 .catch(error => {

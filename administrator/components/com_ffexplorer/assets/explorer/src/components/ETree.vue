@@ -77,10 +77,11 @@ export default {
             Vue.set(root, 'children', res);
         })
         .catch(error => {
+            alert('init root folder error');
             console.log(error);
         });
 
-        setTimeout(() => {
+        this.$nextTick(() => {
             this.setTreeHeight();
         });
 
@@ -112,12 +113,19 @@ export default {
                     path: item.path,
                 })
                 .then(res => {
-                    const children = item.children ? item.children : [];
-                    const data = jQuery.extend(true, [], children, res);
-
-                    Vue.set(item, 'children', data);
+                    if (res.error) {
+                        alert(res.error)
+                    } else {
+                        Vue.set(item, 'children', []);
+                        this.$nextTick(() => {
+                            Vue.set(item, 'children', res);
+                        });
+                    }
 
                     resolve();
+                })
+                .catch(error => {
+                    alert('refresh error');
                 });
             });
         },

@@ -12,7 +12,7 @@
                 :class="{active: file.path === current}"
                 :title="file.path"
                 @click="open(file)"
-                @mouseup.middle="removeFile(file.path)"
+                @mouseup.middle="close(file.path)"
             >
                 <div class="file-status is-saving" v-if="file.status === 'saving'">•</div>
                 <div class="file-status is-dirty" v-if="file.status === 'dirty'">•</div>
@@ -28,7 +28,7 @@
                     license="https://fontawesome.com/license" 
                     viewBox="0 0 352 512"
                     :style="{visibility: file.path === current ? 'visible' : 'hidden'}" 
-                    @click.stop="removeFile(file.path)"
+                    @click.stop="close(file.path)"
                 >
                     <path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path>
                 </svg>
@@ -36,7 +36,7 @@
         </draggable>
         <EContentEditor 
             ref="editor"
-            @removeFile="removeFile"
+            @removeFile="close"
             @statusChange="onStatusChange" />
     </div>
 </template>
@@ -85,7 +85,19 @@ export default {
             this.$refs.editor.initEditor(file.path, force);
         },
 
-        removeFile(path) {
+        close(path) {
+            const current = this.files.find(file => file.path === path);
+            if (current.status === 'saving') {
+                return;
+            }
+
+            if (current.status === 'dirty') {
+                const ok = confirm("You haven't save yet. Do you to close without saving?");
+                if (!ok) {
+                    return;
+                }
+            }
+
             const idx = this.files.findIndex(file => file.path === path);
 
             if (idx !== -1) {
@@ -129,7 +141,7 @@ export default {
 
             .file-status {
                 position: absolute;
-                top: 8px;
+                top: 5px;
                 left: 2px;
                 font-size: 18px;
 
