@@ -140,7 +140,10 @@ export default {
                     path,
                 })
                 .then(res => {
-                    resolve(res);
+                    setTimeout(() => {
+                        
+                        resolve(res);
+                    }, 3000);
                 })
                 .catch(error => {
                     reject(error);
@@ -163,24 +166,30 @@ export default {
             });
         }, 100),
 
-        getFileContent(file) {
+        getFileContent(path) {
             return new Promise((resolve, reject) => {
+                this.$store.commit('lock', path);
+
                 this.$ajax({
                     task: 'explorer.openFile',
-                    path: file
+                    path: path
                 })
                 .then(res => {
                     if (!res || res.error) {
                         alert(res ? res.error : 'Could not open file');
-                        this.$emit('removeFile', file);
+                        this.$emit('removeFile', path);
                         this.resetEditor();
                     } else {
                         resolve(res);
                     }
+
+                    this.$store.commit('unlock', path);
                 })
                 .catch(error => {
                     alert('error');
                     console.log(error);
+
+                    this.$store.commit('unlock', path);
                 });
             });
         },
@@ -202,11 +211,12 @@ export default {
                         }
 
                         currentData.saving = true;
-                        const tmpSaved = currentData.model.getAlternativeVersionId();
 
                         this.emitEditorStatus(currentData, this.current);
+                        this.$store.commit('lock', this.current);
 
                         const content = editor.getValue();
+                        const tmpSaved = currentData.model.getAlternativeVersionId();
 
                         this.saveContent(this.current, content).then(res => {
                             currentData.saving = false;
@@ -218,11 +228,14 @@ export default {
                             }
 
                             this.emitEditorStatus(currentData, this.current);
+                            this.$store.commit('unlock', this.current);
                         })
                         .catch(error => {
                             currentData.saving = false;
                             alert('save error');
                             console.log(error);
+
+                            this.$store.commit('unlock', this.current);
                         });
                     });
 

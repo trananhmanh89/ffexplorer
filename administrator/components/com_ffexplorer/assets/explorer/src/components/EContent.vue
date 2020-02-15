@@ -65,7 +65,7 @@ export default {
 
     mounted() {
         EventBus.$on("openFileEditor", ({item, force}) => {
-            const inList = !!this.files.find(file => file.path === item.path);
+            const inList = this.files.find(file => file.path === item.path);
 
             if (!inList) {
                 this.files.push({

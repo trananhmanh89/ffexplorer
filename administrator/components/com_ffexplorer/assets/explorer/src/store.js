@@ -8,15 +8,26 @@ export default new Vuex.Store({
 
     state: {
         selectedPath: '',
-    },
-
-    actions: {
-
+        lockedFiles: [],
     },
 
     mutations: {
         selectPath(state, path) {
             state.selectedPath = path;
         },
+
+        lock({lockedFiles}, path) {
+            if (lockedFiles.indexOf(path) < 0) {
+                lockedFiles.push(path);
+            }
+        },
+
+        unlock({lockedFiles}, path) {
+            const idx = lockedFiles.findIndex(item => item === path);
+
+            if (idx > -1) {
+                lockedFiles.splice(idx, 1);
+            }
+        }
     },
 });

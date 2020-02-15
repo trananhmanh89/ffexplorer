@@ -16,19 +16,19 @@
             <li v-if="contextItem.type === 'folder'" @click="newFolder">
                 <a>New Folder</a>
             </li>
-            <li v-if="contextItem.type === 'folder' && !isRoot" @click="renameFolder">
+            <li v-if="contextItem.type === 'folder' && !isRoot" @click="delayCall('renameFolder')">
                 <a>Rename Folder</a>
             </li>
-            <li v-if="contextItem.type === 'folder' && !isRoot" @click="deleteFolder">
+            <li v-if="contextItem.type === 'folder' && !isRoot" @click="delayCall('deleteFolder')">
                 <a>Delete Folder</a>
             </li>
-            <li v-if="contextItem.type === 'file'" @click="openFile">
+            <li v-if="contextItem.type === 'file'" @click="delayCall('openFile')">
                 <a>Open</a>
             </li>
-            <li v-if="contextItem.type === 'file'" @click="renameFile">
+            <li v-if="contextItem.type === 'file'" @click="delayCall('renameFile')">
                 <a>Rename File</a>
             </li>
-            <li v-if="contextItem.type === 'file'" @click="deleteFile">
+            <li v-if="contextItem.type === 'file'" @click="delayCall('deleteFile')">
                 <a>Delete File</a>
             </li>
         </vue-context>
@@ -106,6 +106,15 @@ export default {
     },
 
     methods: {
+        delayCall: debounce(function(action) {
+            this[action]();
+        }),
+
+        isLocking(path) {
+            const {lockedFiles} = this.$store.state;
+            return lockedFiles.indexOf(path) > -1;
+        },
+
         refreshNode(item) {
             return new Promise((resolve, reject) => {
                 this.$ajax({
@@ -238,6 +247,11 @@ export default {
         },
 
         openFile() {
+            if (this.isLocking(this.contextItem.path)) {
+                alert('File is locked for opening or saving. Please try again later.');
+                return;
+            }
+
             EventBus.$emit('openFileEditor', {
                 item: this.contextItem,
                 force: true
@@ -245,6 +259,11 @@ export default {
         },
 
         renameFile() {
+            if (this.isLocking(this.contextItem.path)) {
+                alert('File is locked for opening or saving. Please try again later.');
+                return;
+            }
+
             this.$prompt('Rename file '  + this.contextItem.name, 'Rename File', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
@@ -273,6 +292,11 @@ export default {
         },
 
         deleteFile() {
+            if (this.isLocking(this.contextItem.path)) {
+                alert('File is locked for opening or saving. Please try again later.');
+                return;
+            }
+
             this.$confirm('This will permanently delete the file. Continue?', 'Delete File', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',

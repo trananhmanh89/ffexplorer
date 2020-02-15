@@ -61,6 +61,14 @@ export default {
                 return;
             }
 
+            const {lockedFiles} = this.$store.state;
+            const isLocked = lockedFiles.indexOf(this.item.path) > -1;
+
+            if (isLocked) {
+                alert('File is locked for opening or saving. Please try again later.');
+                return;
+            }
+
             EventBus.$emit('openFileEditor', {
                 item: this.item,
                 force: true
