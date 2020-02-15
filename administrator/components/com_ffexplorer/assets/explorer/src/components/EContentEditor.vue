@@ -136,8 +136,8 @@ export default {
                     path: file
                 })
                 .then(res => {
-                    if (res.error) {
-                        alert(res.error);
+                    if (!res || res.error) {
+                        alert(res ? res.error : 'Could not open file');
                         this.$emit('removeFile', file);
                         this.resetEditor();
                     } else {
