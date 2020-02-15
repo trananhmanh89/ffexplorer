@@ -140,10 +140,7 @@ export default {
                     path,
                 })
                 .then(res => {
-                    setTimeout(() => {
-                        
-                        resolve(res);
-                    }, 3000);
+                    resolve(res);
                 })
                 .catch(error => {
                     reject(error);
@@ -204,7 +201,8 @@ export default {
                     }
 
                     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
-                        const currentData = eData[this.current];
+                        const path = this.current;
+                        const currentData = eData[path];
 
                         if (!currentData || currentData.saving) {
                             return;
@@ -212,13 +210,13 @@ export default {
 
                         currentData.saving = true;
 
-                        this.emitEditorStatus(currentData, this.current);
-                        this.$store.commit('lock', this.current);
+                        this.emitEditorStatus(currentData, path);
+                        this.$store.commit('lock', path);
 
                         const content = editor.getValue();
                         const tmpSaved = currentData.model.getAlternativeVersionId();
 
-                        this.saveContent(this.current, content).then(res => {
+                        this.saveContent(path, content).then(res => {
                             currentData.saving = false;
 
                             if (res.error) {
@@ -227,20 +225,21 @@ export default {
                                 currentData.lastSaved = tmpSaved;
                             }
 
-                            this.emitEditorStatus(currentData, this.current);
-                            this.$store.commit('unlock', this.current);
+                            this.emitEditorStatus(currentData, path);
+                            this.$store.commit('unlock', path);
                         })
                         .catch(error => {
                             currentData.saving = false;
                             alert('save error');
                             console.log(error);
 
-                            this.$store.commit('unlock', this.current);
+                            this.$store.commit('unlock', path);
                         });
                     });
 
                     editor.onDidChangeModelContent(() => {
-                        const currentData = eData[this.current];
+                        const path = this.current
+                        const currentData = eData[path];
 
                         if (!currentData) {
                             return;
@@ -251,7 +250,7 @@ export default {
                             return;
                         }
 
-                        this.emitEditorStatus(currentData, this.current);
+                        this.emitEditorStatus(currentData, path);
                     });
 
                     resolve();
