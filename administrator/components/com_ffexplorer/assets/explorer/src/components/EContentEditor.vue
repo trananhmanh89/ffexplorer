@@ -31,6 +31,20 @@ export default {
             }
         });
 
+        EventBus.$on('fileDeleted', deletedFile => {
+            const data = eData[deletedFile.path];
+
+            if (!data) {
+                return;
+            }
+
+            data.deleted = true;
+
+            if (this.current === deletedFile.path) {
+                editor.updateOptions({readOnly: true});
+            }
+        });
+
         EventBus.$on('folderNameChanged', (newFolder, oldFolder) => {
             for (const key in eData) {
                 const idx = key.indexOf(oldFolder.path);
@@ -51,17 +65,19 @@ export default {
             }
         });
 
-        EventBus.$on('fileDeleted', deletedFile => {
-            const data = eData[deletedFile.path];
+        EventBus.$on('folderDeleted', deletedFolder => {
+            for (const key in eData) {
+                const idx = key.indexOf(deletedFolder.path);
 
-            if (!data) {
-                return;
-            }
+                if (idx !== 0) {
+                    return;
+                }
 
-            data.deleted = true;
+                eData[key].deleted = true;
 
-            if (this.current === deletedFile.path) {
-                editor.updateOptions({readOnly: true});
+                if (this.current === key) {
+                    editor.updateOptions({readOnly: true});
+                }
             }
         });
 

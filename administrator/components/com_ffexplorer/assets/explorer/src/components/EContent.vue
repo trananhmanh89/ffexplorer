@@ -117,6 +117,18 @@ export default {
                 file.path = newFolder.path + tail;
             });
         });
+
+        EventBus.$on('folderDeleted', deletedFolder => {
+            this.files.forEach(file => {
+                const idx = file.path.indexOf(deletedFolder.path);
+
+                if (idx !== 0) {
+                    return;
+                }
+
+                file.status = 'deleted';
+            });
+        });
     },
 
     methods: {
