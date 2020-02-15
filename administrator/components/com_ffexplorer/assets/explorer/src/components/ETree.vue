@@ -392,7 +392,12 @@ export default {
                     
                     parent.children.splice(index, 1);
 
-                    return this.refreshNode(parent).then(() => done());
+                    return this.refreshNode(parent).then(() => { 
+                        const eventName = this.contextItem.type === 'file' ? 'fileDeleted' : 'folderDeleted';
+
+                        EventBus.$emit(eventName, this.contextItem);
+                        done();
+                    });
                 }
             })
             .catch(error => {});

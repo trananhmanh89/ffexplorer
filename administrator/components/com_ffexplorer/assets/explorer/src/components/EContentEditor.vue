@@ -51,6 +51,20 @@ export default {
             }
         });
 
+        EventBus.$on('fileDeleted', deletedFile => {
+            const data = eData[deletedFile.path];
+
+            if (!data) {
+                return;
+            }
+
+            data.deleted = true;
+
+            if (this.current === deletedFile.path) {
+                editor.updateOptions({readOnly: true});
+            }
+        });
+
         window.addEventListener('resize', () => {
             this.computeEditorHeight();
             this.resizeEditorLayout();
@@ -86,6 +100,7 @@ export default {
                     state: {},
                     lastSaved: model.getAlternativeVersionId(),
                     saving: false,
+                    deleted: false,
                 };
 
                 this.emitEditorStatus(eData[path], path);
@@ -93,6 +108,9 @@ export default {
             
             editor.setModel(eData[path].model);
             editor.restoreViewState(eData[path].state);
+            editor.updateOptions({
+                readOnly: eData[path].deleted
+            });
             editor.focus();
             
             this.current = path;

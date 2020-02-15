@@ -9,7 +9,7 @@
                 class="e-content-tab-item"
                 v-for="file in files"
                 :key="file.path"
-                :class="{active: file.path === current}"
+                :class="{active: file.path === current, deleted: file.status === 'deleted'}"
                 :title="file.path"
                 @click="open(file)"
                 @mouseup.middle="close(file.path)"
@@ -65,8 +65,9 @@ export default {
 
     mounted() {
         EventBus.$on("openFileEditor", ({item, force}) => {
-            if (this.files.find(file => file.path === item.path)) {
-            } else {
+            const inList = !!this.files.find(file => file.path === item.path);
+
+            if (!inList) {
                 this.files.push({
                     name: item.name,
                     path: item.path,
@@ -88,6 +89,14 @@ export default {
                 if (this.current === oldFile.path) {
                     this.current = newFile.path;
                 }
+            }
+        });
+
+        EventBus.$on('fileDeleted', deletedFile => {
+            const item =  this.files.find(file => file.path === deletedFile.path);
+
+            if (item) {
+                item.status = 'deleted';
             }
         });
 
@@ -208,6 +217,10 @@ export default {
             &.active {
                 color: #409eff !important;
                 border-bottom: solid 1px #409eff;
+            }
+
+            &.deleted {
+                text-decoration: line-through;
             }
         }
     }
