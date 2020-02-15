@@ -350,7 +350,14 @@ export default {
                     alert(res.error);
                 } else {
                     const parent = this.getParent(this.treeData[0], this.contextItem.path);
-                    return this.refreshNode(parent).then(() => done());
+                    this.refreshNode(parent).then(() => {
+                        const eventName = this.contextItem.type === 'file' ? 'fileNameChanged' : 'folderNameChanged';
+                        EventBus.$emit(eventName, res.file, this.contextItem);
+
+                        done();
+                    });
+
+                    
                 }
             })
             .catch(error => {});

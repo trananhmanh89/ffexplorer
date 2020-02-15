@@ -9,6 +9,8 @@ import debounce from 'lodash/debounce';
 let editor = false;
 const eData = {};
 
+window.eData = eData;
+
 export default {
     data() {
         return {
@@ -18,6 +20,17 @@ export default {
     },
 
     mounted() {
+        EventBus.$on('fileNameChanged', (newFile, oldFile) => {
+            if (eData[oldFile.path]) {
+                eData[newFile.path] = eData[oldFile.path];
+                eData[oldFile.path] = null;
+
+                if (this.current === oldFile.path) {
+                    this.current = newFile.path;
+                }
+            }
+        });
+
         window.addEventListener('resize', () => {
             this.computeEditorHeight();
             this.resizeEditorLayout();
@@ -39,6 +52,7 @@ export default {
             }
 
             if (this.current) {
+                eData[this.current] = eData[this.current] || {};
                 eData[this.current].model = editor.getModel();
                 eData[this.current].state = editor.saveViewState();
             }
@@ -54,52 +68,11 @@ export default {
                     saving: false,
                 };
 
-                model.onDidChangeContent(() => {
-                    const {lastSaved, saving} = eData[path];
-                    if (saving) {
-                        return;
-                    }
-
-                    this.emitEditorStatus(eData[path], path);
-                });
-
                 this.emitEditorStatus(eData[path], path);
             }
             
             editor.setModel(eData[path].model);
             editor.restoreViewState(eData[path].state);
-            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
-                const currentData = eData[path];
-
-                if (currentData.saving) {
-                    return;
-                }
-
-                currentData.saving = true;
-                const tmpSaved = currentData.model.getAlternativeVersionId();
-
-                this.emitEditorStatus(currentData, path);
-
-                const content = editor.getValue();
-
-                this.saveContent(path, content).then(res => {
-                    currentData.saving = false;
-
-                    if (res.error) {
-                        alert(res.error)
-                    } else {
-                        currentData.lastSaved = tmpSaved;
-                    }
-
-                    this.emitEditorStatus(currentData, path);
-                })
-                .catch(error => {
-                    currentData.saving = false;
-                    alert('save error');
-                    console.log(error);
-                });
-            });
-
             editor.focus();
             
             this.current = path;
@@ -167,13 +140,61 @@ export default {
                         });
                     }
 
+                    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
+                        const currentData = eData[this.current];
+
+                        if (!currentData || currentData.saving) {
+                            return;
+                        }
+
+                        currentData.saving = true;
+                        const tmpSaved = currentData.model.getAlternativeVersionId();
+
+                        this.emitEditorStatus(currentData, this.current);
+
+                        const content = editor.getValue();
+
+                        this.saveContent(this.current, content).then(res => {
+                            currentData.saving = false;
+
+                            if (res.error) {
+                                alert(res.error)
+                            } else {
+                                currentData.lastSaved = tmpSaved;
+                            }
+
+                            this.emitEditorStatus(currentData, this.current);
+                        })
+                        .catch(error => {
+                            currentData.saving = false;
+                            alert('save error');
+                            console.log(error);
+                        });
+                    });
+
+                    editor.onDidChangeModelContent(() => {
+                        const currentData = eData[this.current];
+                        console.log(currentData);
+
+                        if (!currentData) {
+                            return;
+                        }
+
+                        const {lastSaved, saving} = currentData;
+                        if (saving) {
+                            return;
+                        }
+
+                        this.emitEditorStatus(currentData, this.current);
+                    });
+
                     resolve();
                 });
             });
         },
 
         removeFile(file) {
-            delete eData[file];
+            eData[file] = null;
 
             if (this.current === file) {
                 this.resetEditor();

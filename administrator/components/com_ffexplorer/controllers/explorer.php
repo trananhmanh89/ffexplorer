@@ -254,8 +254,12 @@ class FfexplorerControllerExplorer extends BaseController
 
         $result = rename( JPATH_ROOT . $oldPath, $file);
         if ($result) {
+            $filePath = realpath($file);
+            $filePath = str_replace(JPATH_ROOT, '', $filePath);
+
             $this->response('file', array(
-                'path' => $file,
+                'path' => $filePath,
+                'name' => $newName,
             ));
         } else {
             $this->response('error', 'rename error');

@@ -77,6 +77,23 @@ export default {
             this.current = item.path;
             this.open(item, force);
         });
+
+        EventBus.$on('fileNameChanged', (newFile, oldFile) => {
+            const item = this.files.find(file => file.path === oldFile.path);
+
+            if (item) {
+                item.path = newFile.path;
+                item.name = newFile.name;
+
+                if (this.current === oldFile.path) {
+                    this.current = newFile.path;
+                }
+            }
+        });
+
+        EventBus.$on('folderNameChanged', (newPath, oldPath) => {
+
+        });
     },
 
     methods: {
