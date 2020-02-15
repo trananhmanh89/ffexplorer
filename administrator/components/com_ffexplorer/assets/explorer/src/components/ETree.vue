@@ -117,6 +117,14 @@ export default {
             return lockedFiles.indexOf(path) > -1;
         },
 
+        isLockedFolder(path) {
+            const {lockedFiles} = this.$store.state;
+
+            return lockedFiles.some(file => {
+                return file.indexOf(path) === 0;
+            });
+        },
+
         refreshNode(item) {
             return new Promise((resolve, reject) => {
                 this.$ajax({
@@ -196,6 +204,11 @@ export default {
         },
 
         renameFolder() {
+            if (this.isLockedFolder(this.contextItem.path)) {
+                alert('Folder is locked. Having some files are opening or saving. Pleae wait till process done then try again.');
+                return;
+            }
+
             this.$prompt('Rename folder '  + this.contextItem.name, 'Rename Folder', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
@@ -224,6 +237,11 @@ export default {
         },
 
         deleteFolder() {
+            if (this.isLockedFolder(this.contextItem.path)) {
+                alert('Folder is locked. Having some files are opening or saving. Pleae wait till process done then try again.');
+                return;
+            }
+
             this.$confirm('This will permanently delete the folder and its files. Continue?', 'Delete Folder', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',

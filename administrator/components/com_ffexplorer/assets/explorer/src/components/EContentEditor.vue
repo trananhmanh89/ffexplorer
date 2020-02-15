@@ -202,34 +202,34 @@ export default {
 
                     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
                         const path = this.current;
-                        const currentData = eData[path];
+                        const data = eData[path];
 
-                        if (!currentData || currentData.saving) {
+                        if (!data || data.saving || data.deleted) {
                             return;
                         }
 
-                        currentData.saving = true;
+                        data.saving = true;
 
-                        this.emitEditorStatus(currentData, path);
+                        this.emitEditorStatus(data, path);
                         this.$store.commit('lock', path);
 
                         const content = editor.getValue();
-                        const tmpSaved = currentData.model.getAlternativeVersionId();
+                        const tmpSaved = data.model.getAlternativeVersionId();
 
                         this.saveContent(path, content).then(res => {
-                            currentData.saving = false;
+                            data.saving = false;
 
                             if (res.error) {
                                 alert(res.error)
                             } else {
-                                currentData.lastSaved = tmpSaved;
+                                data.lastSaved = tmpSaved;
                             }
 
-                            this.emitEditorStatus(currentData, path);
+                            this.emitEditorStatus(data, path);
                             this.$store.commit('unlock', path);
                         })
                         .catch(error => {
-                            currentData.saving = false;
+                            data.saving = false;
                             alert('save error');
                             console.log(error);
 
@@ -239,18 +239,18 @@ export default {
 
                     editor.onDidChangeModelContent(() => {
                         const path = this.current
-                        const currentData = eData[path];
+                        const data = eData[path];
 
-                        if (!currentData) {
+                        if (!data) {
                             return;
                         }
 
-                        const {lastSaved, saving} = currentData;
+                        const {lastSaved, saving} = data;
                         if (saving) {
                             return;
                         }
 
-                        this.emitEditorStatus(currentData, path);
+                        this.emitEditorStatus(data, path);
                     });
 
                     resolve();
