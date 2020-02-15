@@ -2743,6 +2743,7 @@
 }
 .e-folders .v-context li {
       cursor: pointer;
+      user-select: none;
 }
 
 .e-sidebar {

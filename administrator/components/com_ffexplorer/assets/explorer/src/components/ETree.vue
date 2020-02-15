@@ -350,9 +350,11 @@ export default {
                     alert(res.error);
                 } else {
                     const parent = this.getParent(this.treeData[0], this.contextItem.path);
+
                     this.refreshNode(parent).then(() => {
                         const eventName = this.contextItem.type === 'file' ? 'fileNameChanged' : 'folderNameChanged';
-                        EventBus.$emit(eventName, res.file, this.contextItem);
+
+                        EventBus.$emit(eventName, res.data, this.contextItem);
 
                         done();
                     });
@@ -459,6 +461,7 @@ export default {
 
         li {
             cursor: pointer;
+            user-select: none;
         }
     }
 }

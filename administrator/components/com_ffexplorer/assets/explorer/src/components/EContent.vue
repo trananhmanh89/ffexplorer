@@ -91,8 +91,22 @@ export default {
             }
         });
 
-        EventBus.$on('folderNameChanged', (newPath, oldPath) => {
+        EventBus.$on('folderNameChanged', (newFolder, oldFolder) => {
+            this.files.forEach(file => {
+                const idx = file.path.indexOf(oldFolder.path);
 
+                if (idx !== 0) {
+                    return;
+                }
+
+                const tail = file.path.slice(oldFolder.path.length - file.path.length);
+
+                if (this.current === file.path) {
+                    this.current = newFolder.path + tail;
+                }
+
+                file.path = newFolder.path + tail;
+            });
         });
     },
 

@@ -203,7 +203,13 @@ class FfexplorerControllerExplorer extends BaseController
 
         $result = rename( JPATH_ROOT . $oldPath, $folder);
         if ($result) {
-            $this->response('success', 'Folder name changed to ' . $folder);
+            $folderPath = realpath($folder);
+            $folderPath = str_replace(JPATH_ROOT, '', $folderPath);
+
+            $this->response('data', array(
+                'path' => $folderPath,
+                'name' => $newName,
+            ));
         } else {
             $this->response('error', 'rename error');
         }
@@ -257,7 +263,7 @@ class FfexplorerControllerExplorer extends BaseController
             $filePath = realpath($file);
             $filePath = str_replace(JPATH_ROOT, '', $filePath);
 
-            $this->response('file', array(
+            $this->response('data', array(
                 'path' => $filePath,
                 'name' => $newName,
             ));

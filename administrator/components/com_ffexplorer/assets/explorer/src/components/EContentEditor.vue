@@ -23,10 +23,30 @@ export default {
         EventBus.$on('fileNameChanged', (newFile, oldFile) => {
             if (eData[oldFile.path]) {
                 eData[newFile.path] = eData[oldFile.path];
-                eData[oldFile.path] = null;
+                delete eData[oldFile.path];
 
                 if (this.current === oldFile.path) {
                     this.current = newFile.path;
+                }
+            }
+        });
+
+        EventBus.$on('folderNameChanged', (newFolder, oldFolder) => {
+            for (const key in eData) {
+                const idx = key.indexOf(oldFolder.path);
+
+                if (idx !== 0) {
+                    return;
+                }
+
+                const tail = key.slice(oldFolder.path.length - key.length);
+                const newkey = newFolder.path + tail;
+
+                eData[newkey] = eData[key];
+                delete eData[key];
+
+                if (this.current === key) {
+                    this.current = newkey;
                 }
             }
         });
@@ -174,7 +194,6 @@ export default {
 
                     editor.onDidChangeModelContent(() => {
                         const currentData = eData[this.current];
-                        console.log(currentData);
 
                         if (!currentData) {
                             return;
@@ -193,10 +212,10 @@ export default {
             });
         },
 
-        removeFile(file) {
-            eData[file] = null;
+        removeFile(path) {
+            delete eData[path];
 
-            if (this.current === file) {
+            if (this.current === path) {
                 this.resetEditor();
             }
         },
