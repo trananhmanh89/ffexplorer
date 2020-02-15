@@ -106,11 +106,13 @@ export default {
     },
 
     methods: {
-        delayCall: debounce(function(action) {
-            this[action]();
-        }),
+        delayCall(action) {
+            setTimeout(() => {
+                this[action]();
+            });
+        },
 
-        isLocking(path) {
+        isLockedFile(path) {
             const {lockedFiles} = this.$store.state;
             return lockedFiles.indexOf(path) > -1;
         },
@@ -247,7 +249,7 @@ export default {
         },
 
         openFile() {
-            if (this.isLocking(this.contextItem.path)) {
+            if (this.isLockedFile(this.contextItem.path)) {
                 alert('File is locked for opening or saving. Please try again later.');
                 return;
             }
@@ -259,7 +261,7 @@ export default {
         },
 
         renameFile() {
-            if (this.isLocking(this.contextItem.path)) {
+            if (this.isLockedFile(this.contextItem.path)) {
                 alert('File is locked for opening or saving. Please try again later.');
                 return;
             }
@@ -292,7 +294,7 @@ export default {
         },
 
         deleteFile() {
-            if (this.isLocking(this.contextItem.path)) {
+            if (this.isLockedFile(this.contextItem.path)) {
                 alert('File is locked for opening or saving. Please try again later.');
                 return;
             }

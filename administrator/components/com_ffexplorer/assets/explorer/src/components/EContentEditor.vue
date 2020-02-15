@@ -151,7 +151,7 @@ export default {
             });
         },
 
-        emitEditorStatus: debounce(function(data, path) {
+        emitEditorStatus(data, path) {
             let status;
 
             if (data.saving) {
@@ -164,7 +164,7 @@ export default {
                 status,
                 path,
             });
-        }, 100),
+        },
 
         getFileContent(path) {
             return new Promise((resolve, reject) => {
