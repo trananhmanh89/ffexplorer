@@ -237,8 +237,10 @@ export default {
 
         .e-content-tab-item {
             position: relative;
-            padding: 12px 10px;
-            display: flex;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            padding-left: 10px;
+            padding-right: 17px;
             user-select: none;
             white-space: nowrap;
             cursor: pointer;
@@ -259,9 +261,11 @@ export default {
             }
 
             svg.fa-times {
+                position: absolute;
+                top: 12px;
+                right: 3px;
                 width: 10px;
                 height: 10px;
-                margin-left: 5px;
                 opacity: 0.7;
 
                 &:hover {
