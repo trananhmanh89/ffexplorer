@@ -71,7 +71,7 @@ export default {
                 this.files.push({
                     name: item.name,
                     path: item.path,
-                    status: 'normal',
+                    status: 'opening',
                 });
             }
 
@@ -134,13 +134,18 @@ export default {
     methods: {
         open(file, force) {
             this.current = file.path;
-            this.$refs.editor.initEditor(file.path, force);
+            this.$refs.editor.initEditor(file, force);
         },
 
         close(path) {
             const current = this.files.find(file => file.path === path);
             if (current.status === 'saving') {
                 alert('Saving. Can not close for now.')
+                return;
+            }
+
+            if (current.status === 'opening') {
+                alert('Opening. Can not close for now.')
                 return;
             }
 

@@ -44,31 +44,8 @@ class FfexplorerControllerExplorer extends BaseController
             $this->response('error', 'file not existed');
         }
 
-        $info = pathinfo($path);
-        $ext = isset($info['extension']) ? $info['extension'] : 'unknow';
         $content = file_get_contents($file);
-
-        $languages = array(
-            'js' => 'javascript',
-            'php' => 'php',
-            'scss' => 'scss',
-            'css' => 'css',
-            'less' => 'less',
-            'sql' => 'mysql',
-            'ini' => 'ini',
-            'xml' => 'xml',
-            'html' => 'html',
-            'svg' => 'html',
-            'json' => 'json',
-            'md' => 'markdown',
-        );
-
-        $language = isset($languages[$ext]) ? $languages[$ext] : '';
-
-        $this->response('data', array(
-            'language' => $language,
-            'content' => $content,
-        ));
+        $this->response('content', $content);
     }
 
     public function explodeFolder()
@@ -294,6 +271,7 @@ class FfexplorerControllerExplorer extends BaseController
 
     public function checkToken($method = 'post', $redirect = false)
     {
+        sleep(3);
         if (!parent::checkToken($method, $redirect)) {
             $this->response('error', 'csrf token error');
         }

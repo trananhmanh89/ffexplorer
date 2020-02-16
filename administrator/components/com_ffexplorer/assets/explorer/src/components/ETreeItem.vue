@@ -46,6 +46,10 @@ export default {
 
         isSelected() {
             return this.item.path === this.$store.state.selectedPath;
+        },
+
+        isRoot() {
+            return this.item.path === '/';
         }
     },
 
@@ -80,7 +84,7 @@ export default {
 
             this.$store.commit('selectPath', path);
 
-            if (this.fetching || !this.isFolder) {
+            if (this.fetching || !this.isFolder || this.isRoot) {
                 return;
             }
 

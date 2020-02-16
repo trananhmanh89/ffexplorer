@@ -81,7 +81,7 @@ export default {
             console.log(error);
         });
 
-        this.$nextTick(() => {
+        setTimeout(() => {
             this.setTreeHeight();
         });
 
@@ -136,7 +136,7 @@ export default {
                         alert(res.error)
                     } else {
                         Vue.set(item, 'children', []);
-                        this.$nextTick(() => {
+                        setTimeout(() => {
                             Vue.set(item, 'children', res);
                         });
                     }

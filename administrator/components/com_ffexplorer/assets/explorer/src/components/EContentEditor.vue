@@ -22,7 +22,11 @@ export default {
     mounted() {
         EventBus.$on('fileNameChanged', (newFile, oldFile) => {
             if (eData[oldFile.path]) {
-                eData[newFile.path] = eData[oldFile.path];
+                const data = eData[oldFile.path];
+
+                data.path = newFile.path;
+                eData[newFile.path] = data;
+
                 delete eData[oldFile.path];
 
                 if (this.current === oldFile.path) {
@@ -38,7 +42,7 @@ export default {
                 return;
             }
 
-            data.deleted = true;
+            data.readOnly = true;
 
             if (this.current === deletedFile.path) {
                 editor.updateOptions({readOnly: true});
@@ -54,13 +58,13 @@ export default {
                 }
 
                 const tail = key.slice(oldFolder.path.length - key.length);
-                const newkey = newFolder.path + tail;
+                const newKey = newFolder.path + tail;
 
-                eData[newkey] = eData[key];
+                eData[newKey] = eData[key];
                 delete eData[key];
 
                 if (this.current === key) {
-                    this.current = newkey;
+                    this.current = newKey;
                 }
             }
         });
@@ -73,7 +77,7 @@ export default {
                     return;
                 }
 
-                eData[key].deleted = true;
+                eData[key].readOnly = true;
 
                 if (this.current === key) {
                     editor.updateOptions({readOnly: true});
@@ -90,46 +94,104 @@ export default {
             this.resizeEditorLayout();
         });
 
-        this.$nextTick(() => {
+        setTimeout(() => {
             this.computeEditorHeight();
         });
     },
 
     methods: {
-        async initEditor(path, force) {
+        async initEditor(file, force) {
             if (!editor) {
                 await this.createEditor();
             }
 
+            const path = file.path;
+
+            if (this.current === path && !force) {
+                return;
+            }
+
             if (this.current) {
-                eData[this.current] = eData[this.current] || {};
                 eData[this.current].model = editor.getModel();
                 eData[this.current].state = editor.saveViewState();
             }
 
-            if (!eData[path] || force) {
-                const {data} = await this.getFileContent(path);
-                const model = monaco.editor.createModel(data.content, data.language);
+            this.current = path;
 
-                eData[path] = {
-                    model: model,
+            if (!eData[path] || force) {
+                const language = this.parseLanguage(file);
+                const sampleModel = monaco.editor.createModel('loading...', language);
+
+                const _data = {
+                    model: sampleModel,
                     state: {},
-                    lastSaved: model.getAlternativeVersionId(),
-                    saving: false,
-                    deleted: false,
+                    lastSaved: 0,
+                    status: 'opening',
+                    readOnly: true,
+                    path: path,
                 };
 
-                this.emitEditorStatus(eData[path], path);
+                eData[path] = _data;
+
+                this.getFileContent(path).then(res => {
+                    _data.status = 'normal';
+                    _data.readOnly = false;
+                    _data.model = monaco.editor.createModel(res.content, language);
+                    _data.model.onDidChangeContent(() => {
+                        if (_data.status === 'saving') {
+                            return;
+                        }
+
+                        const isDirty = _data.lastSaved !== _data.model.getAlternativeVersionId();
+
+                        _data.status = isDirty ? 'dirty' : 'normal';
+
+                        this.emitEditorStatus(_data);
+                    });
+
+                    _data.lastSaved = _data.model.getAlternativeVersionId();
+
+                    this.emitEditorStatus(_data);
+
+                    if (this.current === _data.path) {
+                        this.updateEditor(_data);
+                    }
+                });
             }
             
-            editor.setModel(eData[path].model);
-            editor.restoreViewState(eData[path].state);
+            this.updateEditor(eData[path]);
+        },
+
+        updateEditor({model, state, readOnly}) {
+            editor.setModel(model);
+            editor.restoreViewState(state);
             editor.updateOptions({
-                readOnly: eData[path].deleted
+                readOnly: readOnly
             });
             editor.focus();
-            
-            this.current = path;
+        },
+
+        parseLanguage(file) {
+            const langs = {
+                js: 'javascript',
+                php: 'php',
+                scss: 'scss',
+                css: 'css',
+                less: 'less',
+                sql: 'mysql',
+                ini: 'ini',
+                xml: 'xml',
+                html: 'html',
+                svg: 'html',
+                json: 'json',
+                md: 'markdown',
+                gitignore: 'markdown',
+            };
+
+            const ext = file.name.split('.').pop();
+            return file.name.indexOf('.') > -1 && langs[ext] 
+                    ? langs[ext] 
+                    : '';
         },
 
         saveContent(path, content) {
@@ -148,15 +210,7 @@ export default {
             });
         },
 
-        emitEditorStatus(data, path) {
-            let status;
-
-            if (data.saving) {
-                status = 'saving';
-            } else {
-                status = data.lastSaved === data.model.getAlternativeVersionId() ? 'normal' : 'dirty';
-            }
-
+        emitEditorStatus({status, path}) {
             this.$emit('statusChange', {
                 status,
                 path,
@@ -204,20 +258,20 @@ export default {
                         const path = this.current;
                         const data = eData[path];
 
-                        if (!data || data.saving || data.deleted) {
+                        if (!data || data.status === 'saving' || data.readOnly) {
                             return;
                         }
 
-                        data.saving = true;
+                        data.status = 'saving';
 
-                        this.emitEditorStatus(data, path);
+                        this.emitEditorStatus(data);
                         this.$store.commit('lock', path);
 
                         const content = editor.getValue();
                         const tmpSaved = data.model.getAlternativeVersionId();
 
                         this.saveContent(path, content).then(res => {
-                            data.saving = false;
+                            data.status = 'normal';
 
                             if (res.error) {
                                 alert(res.error)
@@ -225,32 +279,16 @@ export default {
                                 data.lastSaved = tmpSaved;
                             }
 
-                            this.emitEditorStatus(data, path);
+                            this.emitEditorStatus(data);
                             this.$store.commit('unlock', path);
                         })
                         .catch(error => {
-                            data.saving = false;
+                            data.status = 'normal';
                             alert('save error');
                             console.log(error);
 
                             this.$store.commit('unlock', path);
                         });
-                    });
-
-                    editor.onDidChangeModelContent(() => {
-                        const path = this.current
-                        const data = eData[path];
-
-                        if (!data) {
-                            return;
-                        }
-
-                        const {lastSaved, saving} = data;
-                        if (saving) {
-                            return;
-                        }
-
-                        this.emitEditorStatus(data, path);
                     });
 
                     resolve();
