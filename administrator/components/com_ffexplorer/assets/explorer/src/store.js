@@ -9,6 +9,7 @@ export default new Vuex.Store({
     state: {
         selectedPath: '',
         lockedFiles: [],
+        history: [],
     },
 
     mutations: {
@@ -25,8 +26,26 @@ export default new Vuex.Store({
         unlock({lockedFiles}, path) {
             const idx = lockedFiles.findIndex(item => item === path);
 
-            if (idx > -1) {
+            if (idx !== -1) {
                 lockedFiles.splice(idx, 1);
+            }
+        },
+
+        setHistory({history}, path) {
+            const idx = history.findIndex(item => item === path);
+
+            if (idx !== -1) {
+                history.splice(idx, 1);
+            }
+
+            history.push(path);
+        },
+
+        deleteHistory({history}, path) {
+            const idx = history.findIndex(item => item === path);
+
+            if (idx !== -1) {
+                history.splice(idx, 1);
             }
         }
     },

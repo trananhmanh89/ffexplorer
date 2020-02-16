@@ -135,6 +135,8 @@ export default {
         open(file, force) {
             this.current = file.path;
             this.$refs.editor.initEditor(file, force);
+
+            this.$store.commit('setHistory', file.path);
         },
 
         close(path) {
@@ -161,8 +163,18 @@ export default {
             if (idx !== -1) {
                 this.files.splice(idx, 1);
                 this.$refs.editor.removeFile(path);
+                this.$store.commit('deleteHistory', path);
 
-                if (this.current === path) {
+                const {history} = this.$store.state;
+                if (this.current === path && history.length) {
+                    const prevFile = this.files.find(file => file.path === history[history.length - 1]);
+
+                    if (prevFile) {
+                        this.open(prevFile);
+                    } else {
+                        this.current = '';
+                    }
+                } else {
                     this.current = '';
                 }
             }
