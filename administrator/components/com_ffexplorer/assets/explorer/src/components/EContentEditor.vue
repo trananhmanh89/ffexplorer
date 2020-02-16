@@ -231,7 +231,10 @@ export default {
                 })
                 .then(res => {
                     if (!res || res.error) {
-                        alert(res ? res.error : 'Could not open file');
+                        alert(res ? res.error : 'Could not open this file');
+
+                        eData[path].status = 'normal';
+                        this.emitEditorStatus(eData[path]);
                         this.$emit('removeFile', path);
                         this.resetEditor();
                     } else {
