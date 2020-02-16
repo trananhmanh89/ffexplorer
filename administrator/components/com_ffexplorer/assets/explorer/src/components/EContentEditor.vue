@@ -111,7 +111,7 @@ export default {
                 return;
             }
 
-            if (this.current) {
+            if (this.current && eData[this.current]) {
                 eData[this.current].model = editor.getModel();
                 eData[this.current].state = editor.saveViewState();
             }
@@ -144,14 +144,9 @@ export default {
                             return;
                         }
 
-                        const isDirty = _data.lastSaved !== _data.model.getAlternativeVersionId();
-                
-                        _data.status = isDirty ? 'dirty' : 'normal';
-
+                        this.checkDirty(_data);
                         this.emitEditorStatus(_data);
                     });
-
-                    _data.lastSaved = _data.model.getAlternativeVersionId();
 
                     this.emitEditorStatus(_data);
 
@@ -162,6 +157,11 @@ export default {
             }
             
             this.updateEditor(eData[path]);
+        },
+
+        checkDirty(data) {
+            const isDirty = data.lastSaved !== data.model.getAlternativeVersionId();
+            data.status = isDirty ? 'dirty' : 'normal';
         },
 
         updateEditor({model, state, readOnly}) {
@@ -190,10 +190,12 @@ export default {
                 gitignore: 'markdown',
             };
 
+            if (file.name.indexOf('.') === -1) {
+                return '';
+            }
+
             const ext = file.name.split('.').pop();
-            return file.name.indexOf('.') > -1 && langs[ext] 
-                    ? langs[ext] 
-                    : '';
+            return langs[ext] ? langs[ext] : '';
         },
 
         saveContent(path, content) {
@@ -279,19 +281,17 @@ export default {
                                 data.lastSaved = tmpSaved;
                             }
 
-                            const isDirty = data.lastSaved !== data.model.getAlternativeVersionId();
-                
-                            data.status = isDirty ? 'dirty' : 'normal';
-
-                            this.emitEditorStatus(data);
                             this.$store.commit('unlock', path);
                         })
                         .catch(error => {
-                            data.status = 'normal';
                             alert('save error');
                             console.log(error);
 
                             this.$store.commit('unlock', path);
+                        })
+                        .finally(() => {
+                            this.checkDirty(data);
+                            this.emitEditorStatus(data);
                         });
                     });
 

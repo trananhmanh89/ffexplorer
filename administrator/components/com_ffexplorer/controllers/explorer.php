@@ -271,7 +271,7 @@ class FfexplorerControllerExplorer extends BaseController
 
     public function checkToken($method = 'post', $redirect = false)
     {
-        sleep(3);
+        // sleep(3);
         if (!parent::checkToken($method, $redirect)) {
             $this->response('error', 'csrf token error');
         }
