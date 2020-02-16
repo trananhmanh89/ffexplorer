@@ -64,6 +64,14 @@ export default {
     },
 
     mounted() {
+        // for (let index = 0; index < 40; index++) {
+        //     this.files.push({
+        //         name: 'item-test-' + index,
+        //         path: 'item-' + index,
+        //         status: 'normal'
+        //     });
+        // }
+
         EventBus.$on("openFileEditor", ({item, force}) => {
             const inList = this.files.find(file => file.path === item.path);
 
@@ -174,8 +182,11 @@ export default {
                     } else {
                         this.current = '';
                     }
-                } else {
+                }
+
+                if (!this.files.length) {
                     this.current = '';
+                    this.$refs.editor.resetEditor();
                 }
             }
         },

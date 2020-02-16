@@ -134,6 +134,7 @@ export default {
                 eData[path] = _data;
 
                 this.emitEditorStatus(_data);
+                this.$store.commit('lock', path);
 
                 this.getFileContent(path).then(res => {
                     _data.status = 'normal';
@@ -153,6 +154,16 @@ export default {
                     if (this.current === _data.path) {
                         this.updateEditor(_data);
                     }
+                })
+                .catch(error => {
+                    alert('Could not open this file');
+
+                    _data.status = 'normal';
+                    this.emitEditorStatus(_data);
+                    this.$emit('removeFile', _data.path);
+                })
+                .finally(() => {
+                    this.$store.commit('unlock', path);
                 });
             }
             
@@ -223,31 +234,19 @@ export default {
 
         getFileContent(path) {
             return new Promise((resolve, reject) => {
-                this.$store.commit('lock', path);
-
                 this.$ajax({
                     task: 'explorer.openFile',
                     path: path
                 })
                 .then(res => {
                     if (!res || res.error) {
-                        alert(res ? res.error : 'Could not open this file');
-
-                        eData[path].status = 'normal';
-                        this.emitEditorStatus(eData[path]);
-                        this.$emit('removeFile', path);
-                        this.resetEditor();
+                        reject();
                     } else {
                         resolve(res);
                     }
-
-                    this.$store.commit('unlock', path);
                 })
                 .catch(error => {
-                    alert('error');
-                    console.log(error);
-
-                    this.$store.commit('unlock', path);
+                    reject();
                 });
             });
         },
@@ -305,10 +304,6 @@ export default {
 
         removeFile(path) {
             delete eData[path];
-
-            if (this.current === path) {
-                this.resetEditor();
-            }
         },
 
         resetEditor() {
