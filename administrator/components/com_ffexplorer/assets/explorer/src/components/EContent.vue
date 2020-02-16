@@ -4,6 +4,7 @@
             class="e-content-tabs"
             v-model="files" 
             v-bind="dragOptions"
+            @wheel="onWheel"
         >
             <div 
                 class="e-content-tab-item"
@@ -66,11 +67,21 @@ export default {
     mounted() {
         // for (let index = 0; index < 40; index++) {
         //     this.files.push({
-        //         name: 'item-test-' + index,
+        //         name: 'item test-' + index,
         //         path: 'item-' + index,
         //         status: 'normal'
         //     });
         // }
+
+        const $tabs = this.$el.querySelector('.e-content-tabs');
+
+        $tabs.addEventListener('wheel', e => {
+            if (e.deltaY > 0) {
+                $tabs.scrollLeft += 20;
+            } else {
+                $tabs.scrollLeft -= 20;
+            }
+        });
 
         EventBus.$on("openFileEditor", ({item, force}) => {
             const inList = this.files.find(file => file.path === item.path);
@@ -85,6 +96,19 @@ export default {
 
             this.current = item.path;
             this.open(item, force);
+
+            if (force) {
+                setTimeout(() => {
+                    const $active = $tabs.querySelector('.active');
+                    if ($tabs.scrollLeft + $tabs.offsetWidth < $active.offsetLeft + $active.offsetWidth) {
+                        $tabs.scrollLeft = $active.offsetLeft + $active.offsetWidth - $tabs.offsetWidth;
+                    }
+
+                    if ($tabs.scrollLeft > $active.offsetLeft + $active.offsetWidth) {
+                        $tabs.scrollLeft = $active.offsetLeft;
+                    }
+                }, 100);
+            }
         });
 
         EventBus.$on('fileNameChanged', (newFile, oldFile) => {
@@ -140,6 +164,10 @@ export default {
     },
 
     methods: {
+        onWheel(e) {
+            console.log(e);
+        },
+
         open(file, force) {
             this.current = file.path;
             this.$refs.editor.initEditor(file, force);
@@ -209,15 +237,18 @@ export default {
     overflow: hidden;
 
     .e-content-tabs {
+        position: relative;
         min-height: 40px;
         line-height: 15px;
         display: flex;
+        overflow: hidden;
 
         .e-content-tab-item {
             position: relative;
             padding: 12px 10px;
             display: flex;
             user-select: none;
+            white-space: nowrap;
             cursor: pointer;
 
             .file-status {
