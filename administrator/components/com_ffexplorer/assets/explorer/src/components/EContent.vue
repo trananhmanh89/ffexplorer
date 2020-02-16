@@ -65,14 +65,6 @@ export default {
     },
 
     mounted() {
-        // for (let index = 0; index < 40; index++) {
-        //     this.files.push({
-        //         name: 'item test-' + index,
-        //         path: 'item-' + index,
-        //         status: 'normal'
-        //     });
-        // }
-
         const $tabs = this.$el.querySelector('.e-content-tabs');
 
         $tabs.addEventListener('wheel', e => {
