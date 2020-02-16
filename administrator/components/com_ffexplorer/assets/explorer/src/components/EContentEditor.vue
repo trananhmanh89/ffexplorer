@@ -119,7 +119,7 @@ export default {
             this.current = path;
 
             if (!eData[path] || force) {
-                const language = this.parseLanguage(file);
+                const language = this.parseLanguage(file.name);
                 const sampleModel = monaco.editor.createModel('loading...', language);
 
                 const _data = {
@@ -173,7 +173,7 @@ export default {
             editor.focus();
         },
 
-        parseLanguage(file) {
+        parseLanguage(name) {
             const langs = {
                 js: 'javascript',
                 php: 'php',
@@ -190,11 +190,11 @@ export default {
                 gitignore: 'markdown',
             };
 
-            if (file.name.indexOf('.') === -1) {
+            if (name.indexOf('.') === -1) {
                 return '';
             }
 
-            const ext = file.name.split('.').pop();
+            const ext = name.split('.').pop();
             return langs[ext] ? langs[ext] : '';
         },
 
