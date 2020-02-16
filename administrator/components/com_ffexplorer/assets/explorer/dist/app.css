@@ -2808,6 +2808,9 @@
         color: #409eff !important;
         border-bottom: solid 1px #409eff;
 }
+.e-content .e-content-tabs .e-content-tab-item.deleted {
+        text-decoration: line-through;
+}
 .e-content .ghost {
     opacity: 0.5;
     background: #c8ebfb;
