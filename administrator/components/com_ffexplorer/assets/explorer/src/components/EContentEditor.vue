@@ -125,13 +125,15 @@ export default {
                 const _data = {
                     model: sampleModel,
                     state: {},
-                    lastSaved: 0,
+                    lastSaved: sampleModel.getAlternativeVersionId(),
                     status: 'opening',
                     readOnly: true,
                     path: path,
                 };
 
                 eData[path] = _data;
+
+                this.emitEditorStatus(_data);
 
                 this.getFileContent(path).then(res => {
                     _data.status = 'normal';
@@ -143,7 +145,7 @@ export default {
                         }
 
                         const isDirty = _data.lastSaved !== _data.model.getAlternativeVersionId();
-
+                
                         _data.status = isDirty ? 'dirty' : 'normal';
 
                         this.emitEditorStatus(_data);
@@ -271,13 +273,15 @@ export default {
                         const tmpSaved = data.model.getAlternativeVersionId();
 
                         this.saveContent(path, content).then(res => {
-                            data.status = 'normal';
-
                             if (res.error) {
                                 alert(res.error)
                             } else {
                                 data.lastSaved = tmpSaved;
                             }
+
+                            const isDirty = data.lastSaved !== data.model.getAlternativeVersionId();
+                
+                            data.status = isDirty ? 'dirty' : 'normal';
 
                             this.emitEditorStatus(data);
                             this.$store.commit('unlock', path);
