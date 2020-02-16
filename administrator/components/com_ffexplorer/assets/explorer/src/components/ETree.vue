@@ -153,8 +153,8 @@ export default {
             this.$prompt('', 'New File', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
-                inputPattern: /.+/,
-                inputErrorMessage: 'Invalid Name',
+                inputPattern: /^[^,\\\/:\*\?"<>|]+$/,
+                inputErrorMessage: 'File name should not contain ^ , \\ / : * ? " < > |',
                 showClose: true,
                 showCancelButton: true,
                 closeOnClickModal: true,
@@ -180,8 +180,8 @@ export default {
             this.$prompt('', 'New Folder', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
-                inputPattern: /.+/,
-                inputErrorMessage: 'Invalid Name',
+                inputPattern: /^[^,\\\/:\*\?"<>|]+$/,
+                inputErrorMessage: 'Folder name should not contain ^ , \\ / : * ? " < > |',
                 showClose: true,
                 showCancelButton: true,
                 closeOnClickModal: true,
@@ -205,7 +205,7 @@ export default {
 
         renameFolder() {
             if (this.isLockedFolder(this.contextItem.path)) {
-                alert('Folder is locked. Having some files are opening or saving. Pleae wait till process done then try again.');
+                alert('Folder is locked. Having some files are opening or saving. Please wait till process done then try again.');
                 return;
             }
 
@@ -213,8 +213,8 @@ export default {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
                 inputValue: this.contextItem.name,
-                inputPattern: /.+/,
-                inputErrorMessage: 'Invalid Name',
+                inputPattern: /^[^,\\\/:\*\?"<>|]+$/,
+                inputErrorMessage: 'Folder name should not contain ^ , \\ / : * ? " < > |',
                 showClose: true,
                 showCancelButton: true,
                 closeOnClickModal: true,
@@ -238,7 +238,7 @@ export default {
 
         deleteFolder() {
             if (this.isLockedFolder(this.contextItem.path)) {
-                alert('Folder is locked. Having some files are opening or saving. Pleae wait till process done then try again.');
+                alert('Folder is locked. Having some files are opening or saving. Please wait till process done then try again.');
                 return;
             }
 
@@ -288,8 +288,8 @@ export default {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
                 inputValue: this.contextItem.name,
-                inputPattern: /.+/,
-                inputErrorMessage: 'Invalid Name',
+                inputPattern: /^[^,\\\/:\*\?"<>|]+$/,
+                inputErrorMessage: 'File name should not contain ^ , \\ / : * ? " < > |',
                 showClose: true,
                 showCancelButton: true,
                 closeOnClickModal: true,
