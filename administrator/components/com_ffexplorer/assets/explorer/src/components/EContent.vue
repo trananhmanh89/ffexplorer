@@ -77,9 +77,12 @@ export default {
 
         EventBus.$on("openFileEditor", ({item, force}) => {
             const inList = this.files.find(file => file.path === item.path);
+            const currentIdx = this.files.findIndex(file => file.path === this.current);
 
             if (!inList) {
-                this.files.push({
+                const idx = currentIdx === -1 ? 0 : currentIdx + 1;
+
+                this.files.splice(idx, 0, {
                     name: item.name,
                     path: item.path,
                     status: 'opening',
