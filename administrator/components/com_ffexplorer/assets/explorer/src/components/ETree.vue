@@ -155,12 +155,12 @@ export default {
                 cancelButtonText: 'Cancel',
                 inputPattern: /^[^,\\\/:\*\?"<>|]+$/,
                 inputErrorMessage: 'File name should not contain ^ , \\ / : * ? " < > |',
-                showClose: true,
-                showCancelButton: true,
-                closeOnClickModal: true,
-                closeOnPressEscape: true,
-                closeOnHashChange: true,
+                showClose: false,
+                closeOnClickModal: false,
+                closeOnPressEscape: false,
+                closeOnHashChange: false,
                 confirmButtonLoading: false,
+                showCancelButton: true,
                 beforeClose: (action, instance, done) => {
                     if (action == 'confirm') {
                         this.doCreateNew('explorer.newFile', instance, done);
@@ -182,12 +182,12 @@ export default {
                 cancelButtonText: 'Cancel',
                 inputPattern: /^[^,\\\/:\*\?"<>|]+$/,
                 inputErrorMessage: 'Folder name should not contain ^ , \\ / : * ? " < > |',
-                showClose: true,
-                showCancelButton: true,
-                closeOnClickModal: true,
-                closeOnPressEscape: true,
-                closeOnHashChange: true,
+                showClose: false,
+                closeOnClickModal: false,
+                closeOnPressEscape: false,
+                closeOnHashChange: false,
                 confirmButtonLoading: false,
+                showCancelButton: true,
                 beforeClose: (action, instance, done) => {
                     if (action == 'confirm') {
                         this.doCreateNew('explorer.newFolder', instance, done);
@@ -215,12 +215,12 @@ export default {
                 inputValue: this.contextItem.name,
                 inputPattern: /^[^,\\\/:\*\?"<>|]+$/,
                 inputErrorMessage: 'Folder name should not contain ^ , \\ / : * ? " < > |',
-                showClose: true,
-                showCancelButton: true,
-                closeOnClickModal: true,
-                closeOnPressEscape: true,
-                closeOnHashChange: true,
+                showClose: false,
+                closeOnClickModal: false,
+                closeOnPressEscape: false,
+                closeOnHashChange: false,
                 confirmButtonLoading: false,
+                showCancelButton: true,
                 beforeClose: (action, instance, done) => {
                     if (action == 'confirm') {
                         this.doRename('explorer.renameFolder', instance, done);
@@ -245,12 +245,12 @@ export default {
             this.$confirm('This will permanently delete the folder and its files. Continue?', 'Delete Folder', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
-                showClose: true,
-                showCancelButton: true,
-                closeOnClickModal: true,
-                closeOnPressEscape: true,
-                closeOnHashChange: true,
+                showClose: false,
+                closeOnClickModal: false,
+                closeOnPressEscape: false,
+                closeOnHashChange: false,
                 confirmButtonLoading: false,
+                showCancelButton: true,
                 beforeClose: (action, instance, done) => {
                     if (action == 'confirm') {
                         this.doDelete('explorer.deleteFolder', instance, done);
@@ -290,12 +290,12 @@ export default {
                 inputValue: this.contextItem.name,
                 inputPattern: /^[^,\\\/:\*\?"<>|]+$/,
                 inputErrorMessage: 'File name should not contain ^ , \\ / : * ? " < > |',
-                showClose: true,
-                showCancelButton: true,
-                closeOnClickModal: true,
-                closeOnPressEscape: true,
-                closeOnHashChange: true,
+                showClose: false,
+                closeOnClickModal: false,
+                closeOnPressEscape: false,
+                closeOnHashChange: false,
                 confirmButtonLoading: false,
+                showCancelButton: true,
                 beforeClose: (action, instance, done) => {
                     if (action == 'confirm') {
                         this.doRename('explorer.renameFile', instance, done);
@@ -320,12 +320,12 @@ export default {
             this.$confirm('This will permanently delete the file. Continue?', 'Delete File', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
-                showClose: true,
-                showCancelButton: true,
-                closeOnClickModal: true,
-                closeOnPressEscape: true,
-                closeOnHashChange: true,
+                showClose: false,
+                closeOnClickModal: false,
+                closeOnPressEscape: false,
+                closeOnHashChange: false,
                 confirmButtonLoading: false,
+                showCancelButton: true,
                 beforeClose: (action, instance, done) => {
                     if (action == 'confirm') {
                         this.doDelete('explorer.deleteFile', instance, done);
@@ -342,11 +342,7 @@ export default {
         },
 
         doCreateNew(task, instance, done) {
-            instance.showClose = false;
             instance.showCancelButton = false;
-            instance.closeOnClickModal = false;
-            instance.closeOnPressEscape = false;
-            instance.closeOnHashChange = false;
             instance.confirmButtonLoading = true;
 
             this.$ajax({
@@ -356,11 +352,7 @@ export default {
             })
             .then(res => {
                 if (res.error) {
-                    instance.showClose = true;
                     instance.showCancelButton = true;
-                    instance.closeOnClickModal = true;
-                    instance.closeOnPressEscape = true;
-                    instance.closeOnHashChange = true;
                     instance.confirmButtonLoading = false;
                     alert(res.error);
                 } else {
@@ -371,11 +363,7 @@ export default {
         },
 
         doRename(task, instance, done) {
-            instance.showClose = false;
             instance.showCancelButton = false;
-            instance.closeOnClickModal = false;
-            instance.closeOnPressEscape = false;
-            instance.closeOnHashChange = false;
             instance.confirmButtonLoading = true;
 
             this.$ajax({
@@ -385,11 +373,7 @@ export default {
             })
             .then(res => {
                 if (res.error) {
-                    instance.showClose = true;
                     instance.showCancelButton = true;
-                    instance.closeOnClickModal = true;
-                    instance.closeOnPressEscape = true;
-                    instance.closeOnHashChange = true;
                     instance.confirmButtonLoading = false;
                     alert(res.error);
                 } else {
@@ -410,11 +394,7 @@ export default {
         },
 
         doDelete(task, instance, done) {
-            instance.showClose = false;
             instance.showCancelButton = false;
-            instance.closeOnClickModal = false;
-            instance.closeOnPressEscape = false;
-            instance.closeOnHashChange = false;
             instance.confirmButtonLoading = true;
 
             this.$ajax({
@@ -423,11 +403,7 @@ export default {
             })
             .then(res => {
                 if (res.error) {
-                    instance.showClose = true;
                     instance.showCancelButton = true;
-                    instance.closeOnClickModal = true;
-                    instance.closeOnPressEscape = true;
-                    instance.closeOnHashChange = true;
                     instance.confirmButtonLoading = false;
                     alert(res.error);
                 } else {
