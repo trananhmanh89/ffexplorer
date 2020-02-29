@@ -162,7 +162,7 @@ class FfexplorerControllerExplorer extends BaseController
         $newName = $this->input->getString('newName');
         $oldPath = $this->input->getString('oldPath');
 
-        $newName = FOlder::makeSafe($newName);
+        $newName = Folder::makeSafe($newName);
 
         if (!$newName || !$oldPath) {
             $this->response('error', 'empty');
