@@ -12,6 +12,7 @@ class FfexplorerViewExplorer extends HtmlView
     public function display($tpl = null)
     {
         ToolbarHelper::title('Funfis Explorer');
+        ToolbarHelper::preferences('com_ffexplorer');
 
         HTMLHelper::_('jquery.framework');
         HTMLHelper::_('behavior.core');
