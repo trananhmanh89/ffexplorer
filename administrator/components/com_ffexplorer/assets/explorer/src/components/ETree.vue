@@ -16,6 +16,9 @@
             <li v-if="contextItem.type === 'folder'" @click="newFolder">
                 <a>New Folder</a>
             </li>
+            <li v-if="contextItem.type === 'folder'" @click="uploadDialog = true">
+                <a>Upload Files</a>
+            </li>
             <li v-if="contextItem.type === 'folder' && !isRoot" @click="delayCall('renameFolder')">
                 <a>Rename Folder</a>
             </li>
@@ -32,6 +35,29 @@
                 <a>Delete File</a>
             </li>
         </vue-context>
+        <el-dialog 
+            title="Upload Files" 
+            :destroy-on-close="true"
+            :show-close="false"
+            :close-on-click-modal="false"
+            :close-on-press-escape="false"
+            :visible.sync="uploadDialog">
+            <el-upload
+                class="upload-file"
+                :action="uploadUrl"
+                :data="uploadData"
+                :on-success="onSuccessUpload"
+                :multiple="true">
+                <el-button size="small" type="primary">Click to upload</el-button>
+                <div slot="tip" class="el-upload__tip">Files with a size less than {{maxFileSizeUpload}}B</div>
+            </el-upload>
+            <span slot="footer" class="dialog-footer">
+                <el-button 
+                    size="small"
+                    :loading="uploadDialogBusy"
+                    @click="onCloseUploadDialog">Close</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -51,6 +77,8 @@ export default {
     },
 
     data() {
+        const uploadUrl = Joomla.getOptions('system.paths').base + '/index.php?option=com_ffexplorer';
+
         return {
             treeData: [{
                 name: 'root',
@@ -59,6 +87,10 @@ export default {
             }],
             treeHeight: '0px',
             contextItem: {},
+            uploadDialog: false,
+            uploadDialogBusy: false,
+            uploadUrl,
+            maxFileSizeUpload: Joomla.getOptions('ffexplorer_max_file_size_upload'),
         }
     },
 
@@ -102,13 +134,44 @@ export default {
     computed: {
         isRoot() {
             return this.contextItem.path === '/';
+        },
+
+        uploadData() {
+            const csrf_token = Joomla.getOptions('csrf.token');
+            
+            const uploadData = {
+                task: 'explorer.upload',
+                path: this.contextItem.path,
+            };
+            
+            uploadData[csrf_token] = 1;
+
+            return uploadData;
         }
     },
 
     methods: {
+        onSuccessUpload(res, file, fileList) {
+            if (res.error) {
+                alert(res.error);
+
+                const idx = fileList.findIndex(f => f.uid === file.uid);
+                fileList.splice(idx, 1);
+            }
+        },
+
+        onCloseUploadDialog() {
+            this.uploadDialogBusy = true;
+
+            this.refreshNode(this.contextItem).then(() => {
+                this.uploadDialogBusy = false;
+                this.uploadDialog = false;
+            });
+        },
+
         delayCall(action) {
             setTimeout(() => {
-                this[action]();
+                this[action] && this[action]();
             });
         },
 

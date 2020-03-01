@@ -2,12 +2,73 @@
 
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\Path;
+use Joomla\CMS\Helper\MediaHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\String\PunycodeHelper;
 
 defined('_JEXEC') or die('Restricted access');
 
 class FfexplorerControllerExplorer extends BaseController
 {
+    public function upload()
+    {
+        $this->checkToken();
+        $path = $this->input->getString('path');
+
+        if (!$path || !is_dir(JPATH_ROOT . $path)) {
+            $this->response('error', 'empty path');
+        }
+
+        $file = $this->input->files->get('file', array(), 'array');
+        $contentLength = (int) $file['size'];
+        $mediaHelper = new MediaHelper;
+        $postMaxSize = $mediaHelper->toBytes(ini_get('post_max_size'));
+        $memoryLimit = $mediaHelper->toBytes(ini_get('memory_limit'));
+        $uploadMaxFileSize = $mediaHelper->toBytes(ini_get('upload_max_filesize'));
+        
+        if (($file['error'] == 1)
+            || ($postMaxSize > 0 && $contentLength > $postMaxSize)
+            || ($memoryLimit != -1 && $contentLength > $memoryLimit)
+            || ($uploadMaxFileSize > 0 && $contentLength > $uploadMaxFileSize))
+        {
+            $this->response('error', 'File too large');
+        }
+
+        // Make the filename safe
+        $file['name'] = File::makeSafe($file['name']);
+
+        // We need a url safe name
+        $fileparts = pathinfo(JPATH_ROOT . $path . '/' . $file['name']);
+
+        // Transform filename to punycode, check extension and transform it to lowercase
+        $fileparts['filename'] = PunycodeHelper::toPunycode($fileparts['filename']);
+        $tempExt = !empty($fileparts['extension']) ? strtolower($fileparts['extension']) : '';
+
+        // Neglect other than non-alphanumeric characters, hyphens & underscores.
+        $safeFileName = preg_replace(array("/[\\s]/", '/[^a-zA-Z0-9_\-]/'), array('_', ''), $fileparts['filename']) . '.' . $tempExt;
+
+        $file['name'] = $safeFileName;
+
+        $file['filepath'] = Path::clean(JPATH_ROOT . $path . '/' . $file['name']);
+
+        if (File::exists($file['filepath']))
+        {
+            $this->response('error', 'File ' . $file['name'] . ' existed');
+        }
+
+        if (!isset($file['name']))
+        {
+            $this->response('error', 'File error');
+        }
+
+        if (File::upload($file['tmp_name'], $file['filepath'])) {
+            $this->response('success', '');
+        } else {
+            $this->response('error', 'Upload error');
+        }
+    }
+
     public function saveContent()
     {
         $this->checkToken();

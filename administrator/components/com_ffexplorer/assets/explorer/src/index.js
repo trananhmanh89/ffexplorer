@@ -7,6 +7,8 @@ import {
     Message, 
     MessageBox,
     Loading,
+    Dialog,
+    Upload,
 } from "element-ui";
 import lang from 'element-ui/lib/locale/lang/en';
 import locale from 'element-ui/lib/locale';
@@ -17,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     locale.use(lang)
 
     Vue.use(Button);
+    Vue.use(Dialog);
+    Vue.use(Upload);
     Vue.use(Loading.directive);
 
     Vue.prototype.$loading = Loading.service;

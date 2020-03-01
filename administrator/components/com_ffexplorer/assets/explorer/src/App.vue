@@ -13,7 +13,6 @@ export default {
         ESidebar,
         EContent,
     },
-
 }
 </script>
 

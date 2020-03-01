@@ -18,11 +18,13 @@ class FfexplorerViewExplorer extends HtmlView
         HTMLHelper::_('behavior.core');
         HTMLHelper::_('behavior.keepalive');
 
-        $this->document->addScript('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/loader.min.js');
-        $this->document->addScriptDeclaration(";require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs' }});");
+        $doc = $this->document;
+        $doc->addScript('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/loader.min.js');
+        $doc->addScriptDeclaration(";require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs' }});");
 
-        $this->document->addScript(Uri::root(true) . '/administrator/components/com_ffexplorer/assets/explorer/dist/app.js');
-        $this->document->addStyleSheet(Uri::root(true) . '/administrator/components/com_ffexplorer/assets/explorer/dist/app.css');
+        $doc->addScript(Uri::root(true) . '/administrator/components/com_ffexplorer/assets/explorer/dist/app.js');
+        $doc->addStyleSheet(Uri::root(true) . '/administrator/components/com_ffexplorer/assets/explorer/dist/app.css');
+        $doc->addScriptOptions('ffexplorer_max_file_size_upload', ini_get('upload_max_filesize'));
         parent::display($tpl);
     }
 }
