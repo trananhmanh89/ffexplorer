@@ -1,5 +1,6 @@
 <?php
 
+use Joomla\Archive\Zip;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\Path;
@@ -11,6 +12,61 @@ defined('_JEXEC') or die('Restricted access');
 
 class FfexplorerControllerExplorer extends BaseController
 {
+    public function compress()
+    {
+        $this->checkToken();
+        $path = $this->input->getString('path');
+        $path = realpath(JPATH_ROOT . $path);
+
+        if (!$path || !file_exists($path)) {
+            $this->response('error', 'Path not existed');
+        }
+
+        $info = pathinfo($path);
+        $items = array();
+
+        if (is_dir($path)) {
+            $exclude = array('.svn', 'CVS', '.DS_Store', '__MACOSX');
+            $excludefilter = array('.*~');
+            $files = Folder::files($path, '.', true, true, $exclude, $excludefilter);
+            
+            foreach ($files as &$file) {
+                $content = array();
+                $content['data'] = file_get_contents($file);
+
+                $name = realpath($file);
+                $name = $info['filename'] . str_replace($path, '', $name);
+                $content['name'] = $name;
+                $items[] = $content;
+            }
+
+        } else {
+            $items[] = array(
+                'data' => file_get_contents($path),
+                'name' => $info['basename']
+            );
+        }
+
+        $target = $info['dirname'] . '/' . $info['filename'] . '.zip';
+        if (File::exists($target)) {
+            for ($i=1; $i < 100; $i++) { 
+                $target = $info['dirname'] . '/' . $info['filename'] . '(' . $i . ')' . '.zip';
+                if (!File::exists($target)) {
+                    break;
+                }
+            }
+        }
+
+        $archive = new Zip();
+        $result = $archive->create($target, $items);
+        
+        if ($result) {
+            $this->response('success', '');
+        } else {
+            $this->response('error', 'Compress error!!');
+        }
+    }
+
     public function getPermission()
     {
         $this->checkToken();

@@ -10,6 +10,9 @@
             />
         </ul>
         <vue-context ref="menu" :close-on-scroll="true">
+            <li v-if="!isRoot" @click="compress">
+                <a>Compress to Zip</a>
+            </li>
             <li v-if="contextItem.type === 'folder'" @click="newFile">
                 <a>New File</a>
             </li>
@@ -247,6 +250,47 @@ export default {
     },
 
     methods: {
+        compress() {
+            const loading = this.$loading({
+                lock: true,
+                text: 'Compressing',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)',
+                customClass: 'compress-loading'
+            });
+
+            this.$ajax({
+                task: 'explorer.compress',
+                path: this.contextItem.path,
+            })
+            .then(res => {
+                if (res.error) {
+                    alert(res.error);
+                    return;
+                }
+
+                const parent = this.getParent(this.treeData[0], this.contextItem.path);
+                
+                return new Promise((resolve, reject) => {
+                    this.refreshNode(parent).then(() => {
+                        this.$message({
+                            type: 'success',
+                            message: 'Compress successfully'
+                        });
+
+                        resolve();
+                    });
+                });
+            })
+            .catch(error => {
+                alert('error');
+                console.log(error);
+            })
+            .finally(() => {
+                loading.close();
+            });
+        },
+
         savePermission() {
             this.permissionLoading = true;
             
@@ -415,7 +459,7 @@ export default {
                     resolve();
                 })
                 .catch(error => {
-                    alert('refresh error');
+                    alert('refresh node error');
                 });
             });
         },
@@ -480,7 +524,7 @@ export default {
                 return;
             }
 
-            this.$prompt('Rename folder '  + this.contextItem.name, 'Rename Folder', {
+            this.$prompt('Rename folder "'+this.contextItem.name+'"', 'Rename Folder', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
                 inputValue: this.contextItem.name,
@@ -513,7 +557,7 @@ export default {
                 return;
             }
 
-            this.$confirm('This will permanently delete the folder and its files. Continue?', 'Delete Folder', {
+            this.$confirm('This will permanently delete this folder and its files. Continue?', 'Delete folder "' + this.contextItem.name + '"', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
                 showClose: false,
@@ -555,7 +599,7 @@ export default {
                 return;
             }
 
-            this.$prompt('Rename file '  + this.contextItem.name, 'Rename File', {
+            this.$prompt('Rename file "'+this.contextItem.name+'"', 'Rename File', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
                 inputValue: this.contextItem.name,
@@ -588,7 +632,7 @@ export default {
                 return;
             }
 
-            this.$confirm('This will permanently delete the file. Continue?', 'Delete File', {
+            this.$confirm('This will permanently delete this file. Continue?', 'Delete file "'+this.contextItem.name+'"', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
                 showClose: false,
@@ -657,8 +701,6 @@ export default {
 
                         done();
                     });
-
-                    
                 }
             })
             .catch(error => {});
@@ -771,6 +813,13 @@ export default {
             vertical-align: top;
             border-bottom: 1px solid #ddd;
         }
+    }
+}
+
+.el-loading-mask.compress-loading {
+    .el-icon-loading,
+    .el-loading-text {
+        color: #ccc;
     }
 }
 </style>
