@@ -11,6 +11,52 @@ defined('_JEXEC') or die('Restricted access');
 
 class FfexplorerControllerExplorer extends BaseController
 {
+    public function getPermission()
+    {
+        $this->checkToken();
+        $path = $this->input->getString('path');
+        $path = realpath(JPATH_ROOT . $path);
+
+        if (!$path || !file_exists($path)) {
+            $this->response('error', 'Path not existed');
+        }
+
+        if (!Path::check($path)) {
+            $this->response('error', 'Path error');
+        }
+
+        $permission = Path::getPermissions($path);
+        $this->response('permission', $permission);
+    }
+
+    public function setPermission()
+    {
+        $this->checkToken();
+        $path = $this->input->getString('path');
+        $path = realpath(JPATH_ROOT . $path);
+        
+        if (!$path || !file_exists($path)) {
+            $this->response('error', 'Path not existed');
+        }
+
+        $mode = $this->input->get('mode');
+        if (!$mode) {
+            $this->response('error', 'Mode is missing!');
+        }
+
+        if (is_dir($path)) {
+            $result = Path::setPermissions($path, null, $mode);
+        } else {
+            $result = Path::setPermissions($path, $mode, null);
+        }
+
+        if ($result) {
+            $this->response('success', '');
+        } else {
+            $this->response('error', 'Set permission failed');
+        }
+    }
+
     public function upload()
     {
         $this->checkToken();

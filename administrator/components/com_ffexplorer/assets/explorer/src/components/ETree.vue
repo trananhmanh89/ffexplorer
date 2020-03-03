@@ -34,6 +34,9 @@
             <li v-if="contextItem.type === 'file'" @click="delayCall('deleteFile')">
                 <a>Delete File</a>
             </li>
+            <li v-if="!isRoot" @click="openPermissionDialog">
+                <a>Permission</a>
+            </li>
         </vue-context>
         <el-dialog 
             title="Upload Files" 
@@ -56,6 +59,60 @@
                     size="small"
                     :loading="uploadDialogBusy"
                     @click="onCloseUploadDialog">Close</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog 
+            title="Permission" 
+            width="400px"
+            :destroy-on-close="true"
+            :show-close="false"
+            :close-on-click-modal="false"
+            :close-on-press-escape="false"
+            :visible.sync="permissionDialog">
+            <div v-loading="permissionLoading">
+                <table class="permission-config">
+                    <tr>
+                        <td></td>
+                        <td>User</td>
+                        <td>Group</td>
+                        <td>World</td>
+                    </tr>
+                    <tr>
+                        <td>Read</td>
+                        <td><input type="checkbox" v-model="chmod.userRread"></td>
+                        <td><input type="checkbox" v-model="chmod.groupRread"></td>
+                        <td><input type="checkbox" v-model="chmod.worldRead"></td>
+                    </tr>
+                    <tr>
+                        <td>Write</td>
+                        <td><input type="checkbox" v-model="chmod.userWrite"></td>
+                        <td><input type="checkbox" v-model="chmod.groupWrite"></td>
+                        <td><input type="checkbox" v-model="chmod.worldWrite"></td>
+                    </tr>
+                    <tr>
+                        <td>Execute</td>
+                        <td><input type="checkbox" v-model="chmod.userExecute"></td>
+                        <td><input type="checkbox" v-model="chmod.groupExecute"></td>
+                        <td><input type="checkbox" v-model="chmod.worldExecute"></td>
+                    </tr>
+                    <tr>
+                        <td>Permission</td>
+                        <td>{{permission.user}}</td>
+                        <td>{{permission.group}}</td>
+                        <td>{{permission.world}}</td>
+                    </tr>
+                </table>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button 
+                    size="small"
+                    type="primary"
+                    :disabled="permissionLoading"
+                    @click="savePermission">Save</el-button>
+                <el-button 
+                    size="small"
+                    :disabled="permissionLoading"
+                    @click="closePermissionDialog">Close</el-button>
             </span>
         </el-dialog>
     </div>
@@ -91,6 +148,19 @@ export default {
             uploadDialogBusy: false,
             uploadUrl,
             maxFileSizeUpload: Joomla.getOptions('ffexplorer_max_file_size_upload'),
+            permissionDialog: false,
+            permissionLoading: false,
+            chmod: {
+                userRread: false,
+                userWrite: false,
+                userExecute: false,
+                groupRread: false,
+                groupWrite: false,
+                groupExecute: false,
+                worldRead: false,
+                worldWrite: false,
+                worldExecute: false,
+            },
         }
     },
 
@@ -147,10 +217,148 @@ export default {
             uploadData[csrf_token] = 1;
 
             return uploadData;
-        }
+        },
+
+        permission() {
+            let user = 0;
+            let group = 0;
+            let world = 0;
+
+            for (const key in this.chmod) {
+                const val = this.chmod[key];
+
+                if (val) {
+                    user = key === 'userRread' ? user + 4 : user;
+                    user = key === 'userWrite' ? user + 2 : user;
+                    user = key === 'userExecute' ? user + 1 : user;
+
+                    group = key === 'groupRread' ? group + 4 : group;
+                    group = key === 'groupWrite' ? group + 2 : group;
+                    group = key === 'groupExecute' ? group + 1 : group;
+
+                    world = key === 'worldRead' ? world + 4 : world;
+                    world = key === 'worldWrite' ? world + 2 : world;
+                    world = key === 'worldExecute' ? world + 1 : world;
+                }
+            }
+
+            return {user, group, world};
+        },
     },
 
     methods: {
+        savePermission() {
+            this.permissionLoading = true;
+            
+            const {permission} = this;
+            const {user, group, world} = permission;
+            
+            const mode = '0' + user + group + world;
+            
+            this.$ajax({
+                task: 'explorer.setPermission',
+                path: this.contextItem.path,
+                mode,
+            })
+            .then(res => {
+                if (res.error) {
+                    alert(res.error);
+                    return;
+                }
+
+                this.$message({
+                    type: 'success',
+                    message: 'Save permission successfully!',
+                });
+            })
+            .catch(error => {
+                console.log(error);
+                alert('save error');
+            })
+            .finally(() => {
+                this.permissionLoading = false;
+            });
+        },
+
+        closePermissionDialog() {
+            this.permissionDialog = false;
+
+            const chmod = {
+                userRread: false,
+                userWrite: false,
+                userExecute: false,
+                groupRread: false,
+                groupWrite: false,
+                groupExecute: false,
+                worldRead: false,
+                worldWrite: false,
+                worldExecute: false,
+            };
+
+            Vue.set(this, 'chmod', chmod);
+        },
+
+        openPermissionDialog() {
+            this.permissionDialog = true;
+            this.permissionLoading = true;
+            this.$ajax({
+                task: 'explorer.getPermission',
+                path: this.contextItem.path,
+            })
+            .then(res => {
+                if (res.error) {
+                    alert(res.error);
+                    return;
+                }
+
+                if (res.permission) {
+                    const pieces = res.permission.split('');
+                    if (pieces.length !== 9) {
+                        alert('permission error');
+                    }
+                    
+                    for (let i = 0; i < pieces.length; i++) {
+                        const val = pieces[i];
+                        
+                        if (i === 0 && val === 'r') {
+                            this.chmod.userRread =  true;
+                        }
+                        if (i === 1 && val === 'w') {
+                            this.chmod.userWrite =  true;
+                        }
+                        if (i === 2 && val === 'x') {
+                            this.chmod.userExecute =  true;
+                        }
+                        if (i === 3 && val === 'r') {
+                            this.chmod.groupRread =  true;
+                        }
+                        if (i === 4 && val === 'w') {
+                            this.chmod.groupWrite =  true;
+                        }
+                        if (i === 5 && val === 'x') {
+                            this.chmod.groupExecute =  true;
+                        }
+                        if (i === 6 && val === 'r') {
+                            this.chmod.worldRead =  true;
+                        }
+                        if (i === 7 && val === 'w') {
+                            this.chmod.worldWrite =  true;
+                        }
+                        if (i === 8 && val === 'x') {
+                            this.chmod.worldExecute =  true;
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                alert('error');
+            })
+            .finally(() => {
+                this.permissionLoading = false;
+            });
+        },
+
         onSuccessUpload(res, file, fileList) {
             if (res.error) {
                 alert(res.error);
@@ -550,6 +758,18 @@ export default {
         li {
             cursor: pointer;
             user-select: none;
+        }
+    }
+
+    .permission-config {
+        width: 100%;
+
+        td {
+            padding: 8px;
+            line-height: 18px;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid #ddd;
         }
     }
 }
