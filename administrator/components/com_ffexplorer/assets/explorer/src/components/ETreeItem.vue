@@ -5,7 +5,7 @@
             :class="{selected: isSelected}"
             @click="onClick"
             @dblclick="onDblclick"
-            @contextmenu.prevent="openContextMenu"
+            @contextmenu.stop.prevent="openContextMenu"
         >
             <span v-if="isFolder">[{{ isOpen ? '-' : '+' }}]</span> {{ item.name }}
         </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="e-folders" :style="{ height: this.treeHeight }">
+    <div class="e-folders" :style="{ height: this.treeHeight }" @contextmenu.prevent>
         <ul class="e-folders-list">
             <ETreeItem
                 v-for="item in treeData"
@@ -10,32 +10,35 @@
             />
         </ul>
         <vue-context ref="menu" :close-on-scroll="true">
-            <li v-if="!isRoot" @click="compress">
+            <li style="border-bottom: dashed 1px #ddd;" v-if="!isRoot" @click="compress">
                 <a>Compress to Zip</a>
             </li>
             <li v-if="contextItem.type === 'folder'" @click="newFile">
                 <a>New File</a>
             </li>
-            <li v-if="contextItem.type === 'folder'" @click="newFolder">
+            <li style="border-bottom: dashed 1px #ddd;" v-if="contextItem.type === 'folder'" @click="newFolder">
                 <a>New Folder</a>
-            </li>
-            <li v-if="contextItem.type === 'folder'" @click="uploadDialog = true">
-                <a>Upload Files</a>
             </li>
             <li v-if="contextItem.type === 'folder' && !isRoot" @click="delayCall('renameFolder')">
                 <a>Rename Folder</a>
             </li>
-            <li v-if="contextItem.type === 'folder' && !isRoot" @click="delayCall('deleteFolder')">
+            <li style="border-bottom: dashed 1px #ddd;" v-if="contextItem.type === 'folder' && !isRoot" @click="delayCall('deleteFolder')">
                 <a>Delete Folder</a>
             </li>
             <li v-if="contextItem.type === 'file'" @click="delayCall('openFile')">
                 <a>Open</a>
             </li>
+            <li style="border-bottom: dashed 1px #ddd;" v-if="contextItem.type === 'file'" @click="delayCall('download')">
+                <a>Download File</a>
+            </li>
             <li v-if="contextItem.type === 'file'" @click="delayCall('renameFile')">
                 <a>Rename File</a>
             </li>
-            <li v-if="contextItem.type === 'file'" @click="delayCall('deleteFile')">
+            <li style="border-bottom: dashed 1px #ddd;" v-if="contextItem.type === 'file'" @click="delayCall('deleteFile')">
                 <a>Delete File</a>
+            </li>
+            <li v-if="contextItem.type === 'folder'" @click="uploadDialog = true">
+                <a>Upload Files</a>
             </li>
             <li v-if="!isRoot" @click="openPermissionDialog">
                 <a>Permission</a>
@@ -137,7 +140,9 @@ export default {
     },
 
     data() {
-        const uploadUrl = Joomla.getOptions('system.paths').base + '/index.php?option=com_ffexplorer';
+        const baseUrl = Joomla.getOptions('system.paths').base + '/index.php';
+        const uploadUrl = baseUrl + '?option=com_ffexplorer';
+        const csrf_token = Joomla.getOptions('csrf.token');
 
         return {
             treeData: [{
@@ -164,6 +169,8 @@ export default {
                 worldWrite: false,
                 worldExecute: false,
             },
+            baseUrl,
+            csrf_token,
         }
     },
 
@@ -210,8 +217,7 @@ export default {
         },
 
         uploadData() {
-            const csrf_token = Joomla.getOptions('csrf.token');
-            
+            const {csrf_token} = this;
             const uploadData = {
                 task: 'explorer.upload',
                 path: this.contextItem.path,
@@ -250,6 +256,23 @@ export default {
     },
 
     methods: {
+        download() {
+            jQuery('.context-download-file').remove();
+
+            const $body = jQuery('body');
+            const $form = jQuery([
+                '<form class="context-download-file" action="'+this.baseUrl+'" method="post">',
+                    '<input type="hidden" name="option" value="com_ffexplorer">',
+                    '<input type="hidden" name="task" value="explorer.download">',
+                    '<input type="hidden" name="path" value="'+this.contextItem.path+'">',
+                    '<input type="hidden" name="'+this.csrf_token+'" value="1">',
+                '</form>',
+            ].join(''));
+
+            $body.append($form);
+            $form.submit();
+        },
+
         compress() {
             const loading = this.$loading({
                 lock: true,
@@ -339,7 +362,9 @@ export default {
                 worldExecute: false,
             };
 
-            Vue.set(this, 'chmod', chmod);
+            setTimeout(() => {
+                Vue.set(this, 'chmod', chmod);
+            }, 300);
         },
 
         openPermissionDialog() {
@@ -793,7 +818,6 @@ export default {
         }
     }
 
-    
     .v-context {
         padding: 0;
 
@@ -814,6 +838,10 @@ export default {
             border-bottom: 1px solid #ddd;
         }
     }
+}
+
+.context-download-file {
+    display: none;
 }
 
 .el-loading-mask.compress-loading {

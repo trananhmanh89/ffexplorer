@@ -12,13 +12,37 @@ defined('_JEXEC') or die('Restricted access');
 
 class FfexplorerControllerExplorer extends BaseController
 {
+    public function download()
+    {
+        $this->checkToken();
+        $relativePath = $this->input->getString('path');
+        $path = realpath(JPATH_ROOT . $relativePath);
+
+        if (!$relativePath || !file_exists($path) || !is_file($path)) {
+            $this->response('error', 'File not existed');
+        }
+
+        ob_clean();
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+
+        header('Content-Type: ' . finfo_file($finfo, $path));
+  
+        $finfo = finfo_open(FILEINFO_MIME_ENCODING);
+        header('Content-Transfer-Encoding: ' . finfo_file($finfo, $path)); 
+       
+        header('Content-disposition: attachment; filename="' . basename($path) . '"'); 
+       
+        readfile($path);
+        die();
+    }
+
     public function compress()
     {
         $this->checkToken();
-        $path = $this->input->getString('path');
-        $path = realpath(JPATH_ROOT . $path);
+        $relativePath = $this->input->getString('path');
+        $path = realpath(JPATH_ROOT . $relativePath);
 
-        if (!$path || !file_exists($path)) {
+        if (!$relativePath || !file_exists($path)) {
             $this->response('error', 'Path not existed');
         }
 
@@ -70,10 +94,10 @@ class FfexplorerControllerExplorer extends BaseController
     public function getPermission()
     {
         $this->checkToken();
-        $path = $this->input->getString('path');
-        $path = realpath(JPATH_ROOT . $path);
+        $relativePath = $this->input->getString('path');
+        $path = realpath(JPATH_ROOT . $relativePath);
 
-        if (!$path || !file_exists($path)) {
+        if (!$relativePath || !file_exists($path)) {
             $this->response('error', 'Path not existed');
         }
 
@@ -88,10 +112,10 @@ class FfexplorerControllerExplorer extends BaseController
     public function setPermission()
     {
         $this->checkToken();
-        $path = $this->input->getString('path');
-        $path = realpath(JPATH_ROOT . $path);
-        
-        if (!$path || !file_exists($path)) {
+        $relativePath = $this->input->getString('path');
+        $path = realpath(JPATH_ROOT . $relativePath);
+
+        if (!$relativePath || !file_exists($path)) {
             $this->response('error', 'Path not existed');
         }
 
