@@ -40,6 +40,9 @@
             <li v-if="contextItem.type === 'folder'" @click="uploadDialog = true">
                 <a>Upload Files</a>
             </li>
+            <li style="border-bottom: dashed 1px #ddd;" v-if="contextItem.type === 'folder'" @click="refresh">
+                <a>Refresh</a>
+            </li>
             <li v-if="!isRoot" @click="openPermissionDialog">
                 <a>Permission</a>
             </li>
@@ -465,6 +468,10 @@ export default {
             });
         },
 
+        refresh() {
+
+        },
+
         refreshNode(item) {
             return new Promise((resolve, reject) => {
                 this.$ajax({
@@ -819,6 +826,7 @@ export default {
     }
 
     .v-context {
+        min-width: 5rem;
         padding: 0;
 
         li {
