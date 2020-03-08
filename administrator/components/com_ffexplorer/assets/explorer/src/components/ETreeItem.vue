@@ -15,7 +15,6 @@
                 v-for="child in item.children"
                 :key="child.path"
                 :item="child"
-                @addItem="$emit('addItem', $event)"
             />
         </ul>
     </li>
@@ -51,6 +50,26 @@ export default {
 
         isRoot() {
             return this.item.path === '/';
+        },
+
+        isImage() {
+            if (this.isFolder) {
+                return false;
+            }
+
+            const pieces = this.item.name.split('.');
+            if (pieces.length < 2) {
+                return false;
+            }
+
+            const ext = pieces[pieces.length - 1];
+            const imageExt = ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'];
+
+            if (imageExt.indexOf(ext) !== -1) {
+                return true;
+            }
+
+            return false;
         }
     },
 
@@ -64,6 +83,10 @@ export default {
         onDblclick() {
             if (this.isFolder) {
                 return;
+            }
+
+            if (this.isImage) {
+                return EventBus.$emit('openImage', this.item);
             }
 
             const {lockedFiles} = this.$store.state;

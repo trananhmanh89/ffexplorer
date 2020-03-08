@@ -5,8 +5,6 @@
                 v-for="item in treeData"
                 :key="item.path"
                 :item="item"
-                @makeFolder="makeFolder"
-                @addItem="addItem"
             />
         </ul>
         <vue-context ref="menu" :close-on-scroll="true">
@@ -124,6 +122,12 @@
                     @click="closePermissionDialog">Close</el-button>
             </span>
         </el-dialog>
+        <el-dialog 
+            style="text-align: center;"
+            :title="this.image.name" 
+            :visible.sync="imageDialog">
+            <img :src="this.image.path">
+        </el-dialog>
     </div>
 </template>
 
@@ -144,6 +148,7 @@ export default {
     },
 
     data() {
+        const rootUri = Joomla.getOptions('system.paths').root; 
         const baseUrl = Joomla.getOptions('system.paths').base + '/index.php';
         const uploadUrl = baseUrl + '?option=com_ffexplorer';
         const csrf_token = Joomla.getOptions('csrf.token');
@@ -174,7 +179,13 @@ export default {
                 worldExecute: false,
             },
             baseUrl,
+            rootUri,
             csrf_token,
+            imageDialog: false,
+            image: {
+                path: '',
+                name: '',
+            },
         }
     },
 
@@ -211,6 +222,14 @@ export default {
         EventBus.$on('openContextMenu', data => {
             this.$refs.menu.open(data.event);
             Vue.set(this, 'contextItem', data.item);
+        });
+
+        EventBus.$on('openImage', ({name, path}) => {
+            Vue.set(this, 'image', {
+                path: this.rootUri + path,
+                name,
+            });
+            this.imageDialog = true;
         });
     },
 
@@ -795,17 +814,6 @@ export default {
                 }
             })
             .catch(error => {});
-        },
-
-        makeFolder(item) {
-            Vue.set(item, 'children', []);
-            this.addItem(item);
-        },
-
-        addItem(item) {
-            item.children.push({
-                name: 'new stuff'
-            })
         },
 
         setTreeHeight: debounce(function() {
