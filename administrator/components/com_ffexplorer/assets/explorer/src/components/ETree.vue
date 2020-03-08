@@ -126,7 +126,7 @@
             style="text-align: center;"
             :title="this.image.name" 
             :visible.sync="imageDialog">
-            <img :src="this.image.path">
+            <img style="box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);" :src="this.image.path">
         </el-dialog>
     </div>
 </template>
