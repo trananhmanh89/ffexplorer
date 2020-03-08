@@ -95,6 +95,10 @@ export default {
             if (force) {
                 setTimeout(() => {
                     const $active = $tabs.querySelector('.active');
+                    if (!$active) {
+                        return;
+                    }
+
                     if ($tabs.scrollLeft + $tabs.offsetWidth < $active.offsetLeft + $active.offsetWidth) {
                         $tabs.scrollLeft = $active.offsetLeft + $active.offsetWidth - $tabs.offsetWidth;
                     }

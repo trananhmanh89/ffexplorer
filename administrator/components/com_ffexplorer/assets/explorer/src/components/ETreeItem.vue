@@ -24,6 +24,7 @@
 <script>
 import Vue from 'vue';
 import { EventBus } from '../event-bus.js';
+import { arrange } from '../utils';
 
 export default {
     name: 'ETreeItem',
@@ -99,7 +100,8 @@ export default {
                 })
                 .then(res => {
                     this.fetching = false;
-                    Vue.set(this.item, 'children', res);
+
+                    Vue.set(this.item, 'children', arrange(res));
                 })
                 .catch(error => {
                     this.fetching = false;

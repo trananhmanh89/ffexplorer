@@ -134,7 +134,8 @@ import Vue from 'vue';
 import ETreeItem from "./ETreeItem.vue";
 import debounce from 'lodash/debounce';
 import VueContext from 'vue-context';
-import { EventBus } from '../event-bus.js';
+import { EventBus } from '../event-bus';
+import { arrange } from '../utils';
 
 export default {
     components: {
@@ -188,8 +189,7 @@ export default {
             }
 
             const root = this.treeData.find(item => item.path === '/');
-
-            Vue.set(root, 'children', res);
+            Vue.set(root, 'children', arrange(res));
         })
         .catch(error => {
             alert('init root folder error');
@@ -389,9 +389,7 @@ export default {
                         alert('permission error');
                     }
                     
-                    for (let i = 0; i < pieces.length; i++) {
-                        const val = pieces[i];
-                        
+                    pieces.forEach((val, i) => {
                         if (i === 0 && val === 'r') {
                             this.chmod.userRread =  true;
                         }
@@ -419,7 +417,7 @@ export default {
                         if (i === 8 && val === 'x') {
                             this.chmod.worldExecute =  true;
                         }
-                    }
+                    })
                 }
             })
             .catch(error => {
@@ -469,7 +467,24 @@ export default {
         },
 
         refresh() {
+            const loading = this.$loading({
+                lock: true,
+                text: 'Refreshing',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)',
+                customClass: 'compress-loading'
+            });
 
+            this.refreshNode(this.contextItem)
+            .catch(error => {
+                console.log(error);
+                alert('refresh error');
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    loading.close();
+                }, 300);
+            });
         },
 
         refreshNode(item) {
@@ -481,17 +496,31 @@ export default {
                 .then(res => {
                     if (res.error) {
                         alert(res.error)
+                        reject(res.error);
                     } else {
-                        Vue.set(item, 'children', []);
-                        setTimeout(() => {
-                            Vue.set(item, 'children', res);
+                        const children = item.children || [];
+                        const newItems = res.filter(r => {
+                            return !children.find(child => child.path === r.path );
                         });
+
+                        newItems.forEach(i => children.push(i));
+
+                        const deletedItems = children.filter(child => {
+                            return !res.find(r => r.path === child.path);
+                        });
+
+                        deletedItems.forEach(i => {
+                            const idx = children.findIndex(child => child.path === i.path);
+                            children.splice(idx, 1);
+                        });
+
+                        Vue.set(item, 'children', arrange(children));
                     }
 
                     resolve();
                 })
                 .catch(error => {
-                    alert('refresh node error');
+                    reject(error);
                 });
             });
         },

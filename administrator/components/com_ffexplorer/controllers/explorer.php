@@ -270,23 +270,6 @@ class FfexplorerControllerExplorer extends BaseController
             return $item;
         }, $files);
 
-        uasort($files, function($a, $b) {
-            $aLeng = strlen($a->name);
-            $bLeng = strlen($b->name);
-
-            $max = max($aLeng, $bLeng);
-            for ($i=0; $i < $max; $i++) { 
-                $aSub = strtolower(substr($a->name, $i, 1));
-                $bSub = strtolower(substr($b->name, $i, 1));
-
-                if ($aSub !== $bSub) {
-                    return $aSub < $bSub ? -1 : 1;
-                }
-            }
-
-            return -1;
-        });
-
         $result = array_merge($folders, $files);
 
         die(json_encode($result));

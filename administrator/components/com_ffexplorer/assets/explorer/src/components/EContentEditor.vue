@@ -9,8 +9,6 @@ import debounce from 'lodash/debounce';
 let editor = false;
 const eData = {};
 
-window.eData = eData;
-
 export default {
     data() {
         return {
