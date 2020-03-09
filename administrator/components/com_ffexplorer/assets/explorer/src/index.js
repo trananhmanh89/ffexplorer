@@ -13,7 +13,6 @@ import {
 import lang from 'element-ui/lib/locale/lang/en';
 import locale from 'element-ui/lib/locale';
 
-__webpack_public_path__ = Joomla.getOptions('system.paths').base + '/components/com_ffexplorer/assets/explorer/dist/';
 
 document.addEventListener('DOMContentLoaded', () => {
     locale.use(lang)
@@ -32,18 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     Vue.prototype.$ajax = function(options, method) {
         const $ = jQuery;
-        const url = Joomla.getOptions('system.paths').base + '/index.php?option=com_ffexplorer';
-        const csrf_token = Joomla.getOptions('csrf.token');
-        const params = {}
-    
-        params[csrf_token] = 1;
+        const {path, csrfToken} = FF_EXPLORER_DATA;
+        const url = path.ajax;
     
         return new Promise((resolve, reject) => {
             $.ajax({
                 method: method ? method : 'post',
                 url: url,
                 dataType: 'json',
-                data: $.extend(params, options),
+                data: $.extend({}, csrfToken, options),
             })
             .done(response => {
                 resolve(response);

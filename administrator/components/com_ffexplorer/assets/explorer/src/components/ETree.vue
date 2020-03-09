@@ -148,10 +148,14 @@ export default {
     },
 
     data() {
-        const rootUri = Joomla.getOptions('system.paths').root; 
-        const baseUrl = Joomla.getOptions('system.paths').base + '/index.php';
-        const uploadUrl = baseUrl + '?option=com_ffexplorer';
-        const csrf_token = Joomla.getOptions('csrf.token');
+        const {
+            path, 
+            csrfToken, 
+            maxFileSizeUpload,
+            uploadForm
+        } = FF_EXPLORER_DATA;
+        const rootUri = path.root; 
+        const uploadUrl = path.ajax;
 
         return {
             treeData: [{
@@ -164,7 +168,8 @@ export default {
             uploadDialog: false,
             uploadDialogBusy: false,
             uploadUrl,
-            maxFileSizeUpload: Joomla.getOptions('ffexplorer_max_file_size_upload'),
+            maxFileSizeUpload,
+            uploadForm,
             permissionDialog: false,
             permissionLoading: false,
             chmod: {
@@ -178,9 +183,7 @@ export default {
                 worldWrite: false,
                 worldExecute: false,
             },
-            baseUrl,
             rootUri,
-            csrf_token,
             imageDialog: false,
             image: {
                 path: '',
@@ -239,15 +242,12 @@ export default {
         },
 
         uploadData() {
-            const {csrf_token} = this;
             const uploadData = {
                 task: 'explorer.upload',
                 path: this.contextItem.path,
             };
             
-            uploadData[csrf_token] = 1;
-
-            return uploadData;
+            return jQuery.extend(uploadData, this.csrfToken);
         },
 
         permission() {
@@ -282,14 +282,8 @@ export default {
             jQuery('.context-download-file').remove();
 
             const $body = jQuery('body');
-            const $form = jQuery([
-                '<form class="context-download-file" action="'+this.baseUrl+'" method="post">',
-                    '<input type="hidden" name="option" value="com_ffexplorer">',
-                    '<input type="hidden" name="task" value="explorer.download">',
-                    '<input type="hidden" name="path" value="'+this.contextItem.path+'">',
-                    '<input type="hidden" name="'+this.csrf_token+'" value="1">',
-                '</form>',
-            ].join(''));
+            const $form = jQuery(this.uploadForm);
+            $form.find('.file-path').val(this.contextItem.path);
 
             $body.append($form);
             $form.submit();
