@@ -150,7 +150,6 @@ export default {
     data() {
         const {
             path, 
-            csrfToken, 
             maxFileSizeUpload,
             uploadForm
         } = FF_EXPLORER_DATA;
@@ -242,12 +241,13 @@ export default {
         },
 
         uploadData() {
+            const {params} = FF_EXPLORER_DATA;
             const uploadData = {
                 task: 'explorer.upload',
                 path: this.contextItem.path,
             };
             
-            return jQuery.extend(uploadData, this.csrfToken);
+            return jQuery.extend(uploadData, params);
         },
 
         permission() {

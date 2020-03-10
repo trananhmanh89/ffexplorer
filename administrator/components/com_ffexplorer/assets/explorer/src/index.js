@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     Vue.prototype.$ajax = function(options, method) {
         const $ = jQuery;
-        const {path, csrfToken} = FF_EXPLORER_DATA;
+        const {path, params} = FF_EXPLORER_DATA;
         const url = path.ajax;
     
         return new Promise((resolve, reject) => {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: method ? method : 'post',
                 url: url,
                 dataType: 'json',
-                data: $.extend({}, csrfToken, options),
+                data: $.extend({}, params, options),
             })
             .done(response => {
                 resolve(response);

@@ -33,7 +33,7 @@ class FfexplorerViewExplorer extends HtmlView
                 'ajax' => Uri::base() . '?option=com_ffexplorer',
                 'root' => Uri::root(),
             ),
-            'csrfToken' => array(
+            'params' => array(
                 $csrfToken => 1,
             ),
             'maxFileSizeUpload' => ini_get('upload_max_filesize'),
