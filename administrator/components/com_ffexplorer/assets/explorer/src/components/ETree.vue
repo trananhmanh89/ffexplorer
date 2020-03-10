@@ -124,9 +124,10 @@
         </el-dialog>
         <el-dialog 
             style="text-align: center;"
-            :title="this.image.name" 
-            :visible.sync="imageDialog">
-            <img style="box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);" :src="this.image.path">
+            :title="this.previewImage.name" 
+            :append-to-body="true"
+            :visible.sync="previewImageDialog">
+            <img style="box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);" :src="this.previewImage.path">
         </el-dialog>
     </div>
 </template>
@@ -183,8 +184,8 @@ export default {
                 worldExecute: false,
             },
             rootUri,
-            imageDialog: false,
-            image: {
+            previewImageDialog: false,
+            previewImage: {
                 path: '',
                 name: '',
             },
@@ -227,11 +228,11 @@ export default {
         });
 
         EventBus.$on('openImage', ({name, path}) => {
-            Vue.set(this, 'image', {
+            Vue.set(this, 'previewImage', {
                 path: this.rootUri + path,
                 name,
             });
-            this.imageDialog = true;
+            this.previewImageDialog = true;
         });
     },
 
