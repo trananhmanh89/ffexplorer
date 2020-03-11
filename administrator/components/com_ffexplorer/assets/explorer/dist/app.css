@@ -3527,6 +3527,7 @@
       list-style: none;
 }
 .e-folders .v-context {
+    min-width: 5rem;
     padding: 0;
 }
 .e-folders .v-context li {
@@ -3542,6 +3543,13 @@
       text-align: left;
       vertical-align: top;
       border-bottom: 1px solid #ddd;
+}
+.context-download-file {
+  display: none;
+}
+.el-loading-mask.compress-loading .el-icon-loading,
+.el-loading-mask.compress-loading .el-loading-text {
+  color: #ccc;
 }
 
 .e-sidebar {
