@@ -1,5 +1,4 @@
-# Itune Feed Module for Joomla
-
+# FF Explorer
 ## Download
 **[Link](https://github.com/trananhmanh89/ffexplorer/releases/)**
 
