@@ -3560,6 +3560,7 @@
     font-size: 14px;
     line-height: 40px;
     font-weight: bold;
+    padding-bottom: 3px;
 }
 
 .e-content-editor {
@@ -3573,7 +3574,7 @@
 }
 .e-content .e-content-tabs {
     position: relative;
-    min-height: 40px;
+    min-height: 43px;
     line-height: 15px;
     display: flex;
     overflow: hidden;

@@ -237,7 +237,7 @@ export default {
 
     .e-content-tabs {
         position: relative;
-        min-height: 40px;
+        min-height: 43px;
         line-height: 15px;
         display: flex;
         overflow: hidden;
