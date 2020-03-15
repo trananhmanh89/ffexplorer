@@ -1,4 +1,4 @@
-# Funfis Explorer
+# FF Explorer
 
 File manager for joomla
 
