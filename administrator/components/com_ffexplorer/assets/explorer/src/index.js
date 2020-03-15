@@ -12,6 +12,7 @@ import {
 } from "element-ui";
 import lang from 'element-ui/lib/locale/lang/en';
 import locale from 'element-ui/lib/locale';
+import {translate} from './utils';
 
 document.addEventListener('DOMContentLoaded', () => {
     locale.use(lang)
@@ -27,6 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
     Vue.prototype.$confirm = MessageBox.confirm;
     Vue.prototype.$prompt = MessageBox.prompt;
     Vue.prototype.$message = Message;
+
+    Vue.prototype.$t = function(text) {
+        return translate(text);
+    }
 
     Vue.prototype.$ajax = function(options, method) {
         const $ = jQuery;

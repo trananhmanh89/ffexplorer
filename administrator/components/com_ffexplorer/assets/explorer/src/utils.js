@@ -20,3 +20,8 @@ export const arrange = function(items) {
 
     return items;
 }
+
+export const translate = function(text) {
+    const {language} = FF_EXPLORER_DATA;
+    return language[text] || text;
+}

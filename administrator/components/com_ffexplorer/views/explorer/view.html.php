@@ -21,13 +21,18 @@ class FfexplorerViewExplorer extends HtmlView
 
         $doc = $this->document;
         $doc->addScript('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/loader.min.js');
-        $doc->addScriptDeclaration(";require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs' }});");
+        $doc->addScriptDeclaration(";window.require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs' }});");
 
         $doc->addScript(Uri::root(true) . '/administrator/components/com_ffexplorer/assets/explorer/dist/app.js');
         $doc->addStyleSheet(Uri::root(true) . '/administrator/components/com_ffexplorer/assets/explorer/dist/app.css');
         $doc->addScriptOptions('ffexplorer_max_file_size_upload', ini_get('upload_max_filesize'));
 
         $csrfToken = Session::getFormToken();
+        
+        $language = array(
+            
+        );
+
         $data = array(
             'path' => array(
                 'ajax' => Uri::base() . '?option=com_ffexplorer',
@@ -44,7 +49,8 @@ class FfexplorerViewExplorer extends HtmlView
                     '<input type="hidden" name="path" value="" class="file-path">',
                     '<input type="hidden" name="'.$csrfToken.'" value="1">',
                 '</form>',
-            ))
+            )),
+            'language' => $language,
         );
 
         $doc->addScriptDeclaration(';var FF_EXPLORER_DATA = ' . json_encode($data) . ';');
