@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.1" method="upgrade">
 	<name>COM_FFEXPLORER</name>
-	<author>Joomla! Project</author>
-	<creationDate>December 2013</creationDate>
-	<copyright>(C) 2005 - 2019 Open Source Matters. All rights reserved.</copyright>
-	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-	<authorEmail>admin@joomla.org</authorEmail>
-	<authorUrl>www.joomla.org</authorUrl>
-	<version>1.0.0</version>
-	<description>Funfis Explorer</description>
+    <author>Mr Meo</author>
+    <creationDate>December 2019</creationDate>
+    <copyright>https://github.com/trananhmanh89/ffexplorer</copyright>
+    <license>GPL v2</license>
+    <authorUrl>https://github.com/trananhmanh89/ffexplorer</authorUrl>
+    <version>1.0.0</version>
+	<description>FF Explorer</description>
+
+	<updateservers>
+        <server type="collection" name="FF Update Server">https://raw.githubusercontent.com/trananhmanh89/ff-update-server/master/list.xml</server>
+    </updateservers>
 
 	<administration>
 		<files folder="admin">

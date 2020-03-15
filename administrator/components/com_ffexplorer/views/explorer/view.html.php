@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @package     FF Explorer
+ * @subpackage  com_ffexplorer
+ *
+ * @copyright   https://github.com/trananhmanh89/ffexplorer
+ * @license     MIT
+ */
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Session\Session;
@@ -12,7 +20,7 @@ class FfexplorerViewExplorer extends HtmlView
 {
     public function display($tpl = null)
     {
-        ToolbarHelper::title('Funfis Explorer');
+        ToolbarHelper::title('FF Explorer');
         ToolbarHelper::preferences('com_ffexplorer');
 
         HTMLHelper::_('jquery.framework');
