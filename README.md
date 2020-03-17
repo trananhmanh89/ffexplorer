@@ -14,6 +14,8 @@ FF Explorer is file manager on joomla site. Features are supported:
 - change file permission
 - and more ...
 
+**TO SAVE FILE: hit Ctrl + S (or Cmd + S on Mac)
+
 **[Download](https://github.com/trananhmanh89/ffexplorer/releases/)**
 
 ## Like my work?
