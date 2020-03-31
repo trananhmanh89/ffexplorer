@@ -14,7 +14,6 @@ export default {
 
     mounted() {
         setTimeout(() => {
-            return;
             this.$notify({
                 title: 'Like my work? (◕‿◕✿)',
                 type: 'success',
