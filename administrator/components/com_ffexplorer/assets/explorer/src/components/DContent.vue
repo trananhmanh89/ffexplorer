@@ -215,6 +215,8 @@ export default {
                 }
 
                 if (res.success) {
+                    this.resetActiveNode();
+
                     this.$message({
                         type: 'success',
                         message: 'delete succesfully'
