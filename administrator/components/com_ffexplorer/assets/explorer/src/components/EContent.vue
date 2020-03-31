@@ -4,7 +4,6 @@
             class="e-content-tabs"
             v-model="files" 
             v-bind="dragOptions"
-            @wheel="onWheel"
         >
             <div 
                 class="e-content-tab-item"
@@ -75,7 +74,7 @@ export default {
             }
         });
 
-        EventBus.$on("openFileEditor", ({item, force}) => {
+        EventBus.$off('openFileEditor').$on("openFileEditor", ({item, force}) => {
             const inList = this.files.find(file => file.path === item.path);
             const currentIdx = this.files.findIndex(file => file.path === this.current);
 
@@ -110,7 +109,7 @@ export default {
             }
         });
 
-        EventBus.$on('fileNameChanged', (newFile, oldFile) => {
+        EventBus.$off('fileNameChanged').$on('fileNameChanged', (newFile, oldFile) => {
             const item = this.files.find(file => file.path === oldFile.path);
 
             if (item) {
@@ -123,7 +122,7 @@ export default {
             }
         });
 
-        EventBus.$on('fileDeleted', deletedFile => {
+        EventBus.$off('fileDeleted').$on('fileDeleted', deletedFile => {
             const item =  this.files.find(file => file.path === deletedFile.path);
 
             if (item) {
@@ -131,7 +130,7 @@ export default {
             }
         });
 
-        EventBus.$on('folderNameChanged', (newFolder, oldFolder) => {
+        EventBus.$off('folderNameChanged').$on('folderNameChanged', (newFolder, oldFolder) => {
             this.files.forEach(file => {
                 const idx = file.path.indexOf(oldFolder.path);
 
@@ -149,7 +148,7 @@ export default {
             });
         });
 
-        EventBus.$on('folderDeleted', deletedFolder => {
+        EventBus.$off('folderDeleted').$on('folderDeleted', deletedFolder => {
             this.files.forEach(file => {
                 const idx = file.path.indexOf(deletedFolder.path);
 
@@ -163,10 +162,6 @@ export default {
     },
 
     methods: {
-        onWheel(e) {
-            console.log(e);
-        },
-
         open(file, force) {
             this.current = file.path;
             this.$refs.editor.initEditor(file, force);

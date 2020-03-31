@@ -214,7 +214,7 @@ export default {
             this.setTreeHeight();
         });
 
-        window.addEventListener('resize', () => {
+        jQuery(window).on('resize.ffexplorer', () => {
             this.setTreeHeight();
         });
 
@@ -222,12 +222,12 @@ export default {
             this.$refs.menu.close();
         });
 
-        EventBus.$on('openContextMenu', data => {
+        EventBus.$off('openContextMenu').$on('openContextMenu', data => {
             this.$refs.menu.open(data.event);
             Vue.set(this, 'contextItem', data.item);
         });
 
-        EventBus.$on('openImage', ({name, path}) => {
+        EventBus.$off('openImage').$on('openImage', ({name, path}) => {
             Vue.set(this, 'previewImage', {
                 path: this.rootUri + path,
                 name,

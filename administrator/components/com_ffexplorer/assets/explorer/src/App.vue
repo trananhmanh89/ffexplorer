@@ -1,24 +1,23 @@
 <template>
-    <div class="e-app">
-        <ESidebar />
-        <EContent />
+    <div class="ffexplorer-app">
+        <EApp v-if="app === 'explorer'"/>
+        <DApp v-if="app === 'database'"/>
     </div>
 </template>
 
 <script>
-import ESidebar from './components/ESidebar.vue';
-import EContent from './components/EContent.vue';
 export default {
     components: {
-        ESidebar,
-        EContent,
+        EApp: () => import(/* webpackChunkName: "eapp" */ './components/EApp.vue'),
+        DApp: () => import(/* webpackChunkName: "dapp" */ './components/DApp.vue'),
     },
 
     mounted() {
         setTimeout(() => {
+            return;
             this.$notify({
                 title: 'Like my work? (◕‿◕✿)',
-                type: 'warning',
+                type: 'success',
                 dangerouslyUseHTMLString: true,
                 message: [
                     '<a href="https://ko-fi.com/I3I71FSC5" target="_blank">',
@@ -30,11 +29,23 @@ export default {
                 duration: 20000,
             });
         }, 3000);
+
+        this.$store.dispatch('setApp').then(() => {
+            window.addEventListener("hashchange", () => {
+                this.$store.dispatch('setApp');
+            });
+        });
+    },
+
+    computed: {
+        app() {
+            return this.$store.state.app;
+        }
     }
 }
 </script>
 
-<style lang="scss">
+<style>
 .subhead-collapse {
     display: none;
 }
@@ -43,12 +54,7 @@ export default {
     padding-bottom: 0;
 }
 
-.e-app {
-    display: flex;
-}
-
 .el-message-box__input input {
     height: 30px !important;
 }
-
 </style>

@@ -8,6 +8,7 @@
  * @license     MIT
  */
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Session\Session;
@@ -41,6 +42,7 @@ class FfexplorerViewExplorer extends HtmlView
             
         );
 
+        $config = Factory::getConfig();
         $data = array(
             'path' => array(
                 'ajax' => Uri::base() . '?option=com_ffexplorer',
@@ -59,6 +61,7 @@ class FfexplorerViewExplorer extends HtmlView
                 '</form>',
             )),
             'language' => $language,
+            'db' => $config->get('db'),
         );
 
         $doc->addScriptDeclaration(';var FF_EXPLORER_DATA = ' . json_encode($data) . ';');

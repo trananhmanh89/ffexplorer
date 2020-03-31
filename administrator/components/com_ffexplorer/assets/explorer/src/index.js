@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import App from './App.vue';
 import store from './store';
-
 import { 
     Button,
     Message, 
@@ -10,17 +9,21 @@ import {
     Dialog,
     Upload,
     Notification,
+    Pagination,
 } from "element-ui";
 import lang from 'element-ui/lib/locale/lang/en';
 import locale from 'element-ui/lib/locale';
 import {translate} from './utils';
 
 document.addEventListener('DOMContentLoaded', () => {
+    __webpack_public_path__ = FF_EXPLORER_DATA.path.root + 'administrator/components/com_ffexplorer/assets/explorer/dist/';
+
     locale.use(lang)
 
     Vue.use(Button);
     Vue.use(Dialog);
     Vue.use(Upload);
+    Vue.use(Pagination);
     Vue.use(Loading.directive);
 
     Vue.prototype.$loading = Loading.service;

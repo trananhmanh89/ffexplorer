@@ -142,6 +142,7 @@ export default {
     white-space: nowrap;
     cursor: pointer;
     user-select: none;
+    transition: background-color 300ms;
 
     &.selected {
         background-color: #cacaca !important;

@@ -7,7 +7,7 @@ import {EventBus} from '../event-bus';
 import debounce from 'lodash/debounce';
 
 let editor = false;
-const eData = {};
+let eData = {};
 
 export default {
     data() {
@@ -18,7 +18,10 @@ export default {
     },
 
     mounted() {
-        EventBus.$on('fileNameChanged', (newFile, oldFile) => {
+        eData = {};
+        editor = false;
+
+        EventBus.$off('fileNameChanged').$on('fileNameChanged', (newFile, oldFile) => {
             if (eData[oldFile.path]) {
                 const data = eData[oldFile.path];
 
@@ -33,7 +36,7 @@ export default {
             }
         });
 
-        EventBus.$on('fileDeleted', deletedFile => {
+        EventBus.$off('fileDeleted').$on('fileDeleted', deletedFile => {
             const data = eData[deletedFile.path];
 
             if (!data) {
@@ -47,7 +50,7 @@ export default {
             }
         });
 
-        EventBus.$on('folderNameChanged', (newFolder, oldFolder) => {
+        EventBus.$off('folderNameChanged').$on('folderNameChanged', (newFolder, oldFolder) => {
             for (const key in eData) {
                 const idx = key.indexOf(oldFolder.path);
 
@@ -67,7 +70,7 @@ export default {
             }
         });
 
-        EventBus.$on('folderDeleted', deletedFolder => {
+        EventBus.$off('folderDeleted').$on('folderDeleted', deletedFolder => {
             for (const key in eData) {
                 const idx = key.indexOf(deletedFolder.path);
 
@@ -83,7 +86,7 @@ export default {
             }
         });
 
-        window.addEventListener('resize', () => {
+        jQuery(window).on('resize.ffexplorer', () => {
             this.computeEditorHeight();
             this.resizeEditorLayout();
         });
@@ -150,6 +153,7 @@ export default {
                     this.emitEditorStatus(_data);
 
                     if (this.current === _data.path) {
+                        editor.layout();
                         this.updateEditor(_data);
                     }
                 })
@@ -179,6 +183,8 @@ export default {
             editor.updateOptions({
                 readOnly: readOnly
             });
+
+            editor.layout();
             editor.focus();
         },
 
