@@ -452,6 +452,10 @@ export default {
     margin-left: 10px;
     overflow: hidden;
 
+    .el-loading-mask {
+        z-index: 1000;
+    }
+
     .d-content-header {
         min-height: 38px;
         display: flex;
