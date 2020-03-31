@@ -72,6 +72,17 @@
 }
 .d-content .d-content-header {
     min-height: 38px;
+    display: flex;
+}
+.d-content .d-content-header .header-toolbar {
+      flex: 1;
+}
+.d-content .d-content-header .header-toolbar select {
+        width: unset;
+        margin: 0;
+}
+.d-content .d-content-header .header-toolbar input {
+        margin: 0;
 }
 .d-content .d-content-inner {
     overflow: auto;
@@ -106,6 +117,27 @@
 }
 .d-content .dialog-edit .el-dialog__footer {
     padding: 10px;
+}
+.d-content .dialog-insert table {
+    width: 100%;
+}
+.d-content .dialog-insert table > tr {
+      border-bottom: dashed 1px #ddd;
+}
+.d-content .dialog-insert table > tr th {
+        text-align: unset;
+        padding: 5px;
+        white-space: nowrap;
+}
+.d-content .dialog-insert table > tr td {
+        padding: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 300px;
+}
+.d-content .dialog-insert table > tr td input {
+          margin: 0;
 }
 
 .d-app {
