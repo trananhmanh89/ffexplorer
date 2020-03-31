@@ -87,15 +87,15 @@ export default {
         }, 100),
 
         parseSize(size) {
-            const kB = Math.round(size / 1024);
+            const kb = Math.round(size / 1024);
 
-            if (kB < 1024) {
-                return kB + ' kB';
+            if (kb < 1024) {
+                return kb + ' kB';
             }
             
-            const mB = Math.round(size / 1024 / 1024);
+            const mb = Math.round(size / 1024 / 1024);
             if (mb < 1024) {
-                return mB + ' mb';
+                return mb + ' mB';
             }
 
             const gB = Math.round(size / 1024 / 1024);

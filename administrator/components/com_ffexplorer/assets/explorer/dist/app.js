@@ -48,7 +48,7 @@
 /******/
 /******/ 	// script path function
 /******/ 	function jsonpScriptSrc(chunkId) {
-/******/ 		return __webpack_require__.p + "" + ({"vendors~dapp~eapp":"vendors~dapp~eapp","dapp":"dapp","vendors~eapp":"vendors~eapp","eapp":"eapp"}[chunkId]||chunkId) + ".app.js"
+/******/ 		return __webpack_require__.p + "" + ({"vendors-dapp-eapp":"vendors-dapp-eapp","dapp":"dapp","vendors-eapp":"vendors-eapp","eapp":"eapp"}[chunkId]||chunkId) + ".js"
 /******/ 	}
 /******/
 /******/ 	// The require function
@@ -82,11 +82,11 @@
 /******/
 /******/
 /******/ 		// mini-css-extract-plugin CSS loading
-/******/ 		var cssChunks = {"dapp":1,"vendors~eapp":1,"eapp":1};
+/******/ 		var cssChunks = {"dapp":1,"vendors-eapp":1,"eapp":1};
 /******/ 		if(installedCssChunks[chunkId]) promises.push(installedCssChunks[chunkId]);
 /******/ 		else if(installedCssChunks[chunkId] !== 0 && cssChunks[chunkId]) {
 /******/ 			promises.push(installedCssChunks[chunkId] = new Promise(function(resolve, reject) {
-/******/ 				var href = "" + ({"vendors~dapp~eapp":"vendors~dapp~eapp","dapp":"dapp","vendors~eapp":"vendors~eapp","eapp":"eapp"}[chunkId]||chunkId) + ".css";
+/******/ 				var href = "" + ({"vendors-dapp-eapp":"vendors-dapp-eapp","dapp":"dapp","vendors-eapp":"vendors-eapp","eapp":"eapp"}[chunkId]||chunkId) + ".css";
 /******/ 				var fullhref = __webpack_require__.p + href;
 /******/ 				var existingLinkTags = document.getElementsByTagName("link");
 /******/ 				for(var i = 0; i < existingLinkTags.length; i++) {
@@ -266,7 +266,7 @@ eval("var nestRE = /^(attrs|props|on|nativeOn|class|style|hook)$/;\n\nmodule.exp
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n//\n//\n//\n//\n//\n//\n//\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n  components: {\n    EApp: () => Promise.all(/*! import() | eapp */[__webpack_require__.e(\"vendors~dapp~eapp\"), __webpack_require__.e(\"vendors~eapp\"), __webpack_require__.e(\"eapp\")]).then(__webpack_require__.bind(null, /*! ./components/EApp.vue */ \"./src/components/EApp.vue\")),\n    DApp: () => Promise.all(/*! import() | dapp */[__webpack_require__.e(\"vendors~dapp~eapp\"), __webpack_require__.e(\"dapp\")]).then(__webpack_require__.bind(null, /*! ./components/DApp.vue */ \"./src/components/DApp.vue\"))\n  },\n\n  mounted() {\n    setTimeout(() => {\n      return;\n      this.$notify({\n        title: 'Like my work? (◕‿◕✿)',\n        type: 'success',\n        dangerouslyUseHTMLString: true,\n        message: ['<a href=\"https://ko-fi.com/I3I71FSC5\" target=\"_blank\">', '<img height=\"33\" style=\"border:0px;height:36px;\" src=\"https://az743702.vo.msecnd.net/cdn/kofi3.png?v=2\" border=\"0\" alt=\"Buy Me a Coffee at ko-fi.com\" />', '</a>'].join(''),\n        position: 'bottom-right',\n        offset: 30,\n        duration: 20000\n      });\n    }, 3000);\n    this.$store.dispatch('setApp').then(() => {\n      window.addEventListener(\"hashchange\", () => {\n        this.$store.dispatch('setApp');\n      });\n    });\n  },\n\n  computed: {\n    app() {\n      return this.$store.state.app;\n    }\n\n  }\n});\n\n//# sourceURL=webpack:///./src/App.vue?./node_modules/babel-loader/lib??ref--3!./node_modules/vue-loader/lib??vue-loader-options");
+eval("__webpack_require__.r(__webpack_exports__);\n//\n//\n//\n//\n//\n//\n//\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n  components: {\n    EApp: () => Promise.all(/*! import() | eapp */[__webpack_require__.e(\"vendors-dapp-eapp\"), __webpack_require__.e(\"vendors-eapp\"), __webpack_require__.e(\"eapp\")]).then(__webpack_require__.bind(null, /*! ./components/EApp.vue */ \"./src/components/EApp.vue\")),\n    DApp: () => Promise.all(/*! import() | dapp */[__webpack_require__.e(\"vendors-dapp-eapp\"), __webpack_require__.e(\"dapp\")]).then(__webpack_require__.bind(null, /*! ./components/DApp.vue */ \"./src/components/DApp.vue\"))\n  },\n\n  mounted() {\n    setTimeout(() => {\n      return;\n      this.$notify({\n        title: 'Like my work? (◕‿◕✿)',\n        type: 'success',\n        dangerouslyUseHTMLString: true,\n        message: ['<a href=\"https://ko-fi.com/I3I71FSC5\" target=\"_blank\">', '<img height=\"33\" style=\"border:0px;height:36px;\" src=\"https://az743702.vo.msecnd.net/cdn/kofi3.png?v=2\" border=\"0\" alt=\"Buy Me a Coffee at ko-fi.com\" />', '</a>'].join(''),\n        position: 'bottom-right',\n        offset: 30,\n        duration: 20000\n      });\n    }, 3000);\n    this.$store.dispatch('setApp').then(() => {\n      window.addEventListener(\"hashchange\", () => {\n        this.$store.dispatch('setApp');\n      });\n    });\n  },\n\n  computed: {\n    app() {\n      return this.$store.state.app;\n    }\n\n  }\n});\n\n//# sourceURL=webpack:///./src/App.vue?./node_modules/babel-loader/lib??ref--3!./node_modules/vue-loader/lib??vue-loader-options");
 
 /***/ }),
 

@@ -1,4 +1,4 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["vendors~eapp"],{
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["vendors-eapp"],{
 
 /***/ "./node_modules/sortablejs/modular/sortable.esm.js":
 /*!*********************************************************!*\

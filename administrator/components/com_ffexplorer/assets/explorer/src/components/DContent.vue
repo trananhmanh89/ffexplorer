@@ -3,7 +3,7 @@
         v-loading="loading">
         <div class="d-content-header">
             <el-pagination
-                layout="prev, pager, next"
+                layout="prev, pager, next, jumper"
                 :page-size="50"
                 :hide-on-single-page="true"
                 :current-page.sync="currentPage"
@@ -135,6 +135,7 @@ export default {
                 });
 
                 this.activeItem[this.activeColumn] = res.result;
+                this.dialogValue = res.result;
             })
             .finally(() => {
                 this.saving = false;

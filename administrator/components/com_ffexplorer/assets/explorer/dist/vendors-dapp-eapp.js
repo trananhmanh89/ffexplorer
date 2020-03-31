@@ -1,4 +1,4 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["vendors~dapp~eapp"],{
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["vendors-dapp-eapp"],{
 
 /***/ "./node_modules/lodash/_Symbol.js":
 /*!****************************************!*\

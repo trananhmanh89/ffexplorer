@@ -14,7 +14,7 @@ module.exports = env => {
 
         output: {
             filename: 'app.js',
-            chunkFilename: '[name].app.js',
+            chunkFilename: '[name].js',
             path: path.resolve(__dirname, 'dist'),
         },
 
@@ -62,6 +62,12 @@ module.exports = env => {
                     },
                 },
             ]
+        },
+        
+        optimization: {
+            splitChunks: {
+                automaticNameDelimiter: '-',
+            }
         },
 
         plugins: [
