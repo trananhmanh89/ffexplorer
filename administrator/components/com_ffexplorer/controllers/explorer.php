@@ -380,11 +380,16 @@ class FfexplorerControllerExplorer extends BaseController
         }
 
         if (Folder::exists(JPATH_ROOT . $path)) {
-            if(Folder::delete(JPATH_ROOT . $path)) {
-                $this->response('success', 'deleted');
-            } else {
-                $this->response('error', 'Delete failed');
+            try {
+                if(Folder::delete(JPATH_ROOT . $path)) {
+                    $this->response('success', 'deleted');
+                } else {
+                    $this->response('error', 'Delete failed');
+                }
+            } catch (Exception $e) {
+                $this->response('error', $e->getMessage());
             }
+            
         } else {
             $this->response('error', 'Folder is not existed');
         }
@@ -437,10 +442,14 @@ class FfexplorerControllerExplorer extends BaseController
         }
 
         if (File::exists(JPATH_ROOT . $path)) {
-            if(File::delete(JPATH_ROOT . $path)) {
-                $this->response('success', 'deleted');
-            } else {
-                $this->response('error', 'Delete failed');
+            try {
+                if(File::delete(JPATH_ROOT . $path)) {
+                    $this->response('success', 'deleted');
+                } else {
+                    $this->response('error', 'Delete failed');
+                }
+            } catch (Exception $e) {
+                $this->response('error', $e->getMessage());
             }
         } else {
             $this->response('error', 'File is not existed');
