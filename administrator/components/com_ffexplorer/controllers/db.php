@@ -145,13 +145,13 @@ class FfexplorerControllerDb extends BaseController
         
         $columns = $db->setQuery($query)->loadObjectList();
         
-        $query = "SELECT COUNT(*) FROM $name";
+        $query = $this->getListQuery($name)->select('COUNT(*)');
         $total = $db->setQuery($query)->loadResult();
-        
+
+        $query = $this->getListQuery($name)->select('*');
         $limit = 50;
         $offset = $limit * ($page - 1);
-        $query = "SELECT * FROM $name LIMIT $offset, $limit";
-        $items = $db->setQuery($query)->loadObjectList();
+        $items = $db->setQuery($query, $offset, $limit)->loadObjectList();
         
         $data = array(
             'columns' => $columns,
@@ -160,6 +160,38 @@ class FfexplorerControllerDb extends BaseController
         );
 
         $this->response('data', $data);
+    }
+
+    protected function getListQuery($table)
+    {
+        $db = Factory::getDbo();
+        $query = $db->getQuery(true)->from($db->qn($table));
+
+        $filterCol = $this->input->get('filterCol');
+        $filterValue = $this->input->get('filterValue', '', 'raw');
+        $filterMethod = $this->input->get('filterMethod', '', 'raw');
+
+        if ($filterCol && $filterValue && $filterMethod) {
+            switch ($filterMethod) {
+                case 'like_both':
+                    $query->where($db->qn($filterCol) . ' LIKE ' . $db->q('%' . $filterValue . '%'));
+                    break;
+
+                case 'like_start':
+                    $query->where($db->qn($filterCol) . ' LIKE ' . $db->q($filterValue . '%'));
+                    break;
+
+                case 'like_end':
+                    $query->where($db->qn($filterCol) . ' LIKE ' . $db->q('%' . $filterValue));
+                    break;
+                
+                default:
+                    $query->where($db->qn($filterCol) . '=' . $db->q($filterValue));
+                    break;
+            }
+        }
+
+        return $query;
     }
 
     public function tableList()

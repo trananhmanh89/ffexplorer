@@ -11,6 +11,20 @@
                     class="btn btn-danger" 
                     type="button"
                     @click="openDialogDelete">Delete record</button>
+                <span style="margin-left: 10px; margin-right: 5px;">Filter</span>
+                <select v-model="filterCol">
+                    <option value="">Select column</option>
+                    <option v-for="col in filterColumns" :key="col">{{col}}</option>
+                </select>
+                <select v-model="filterMethod">
+                    <option value="equal">=</option>
+                    <option value="like_both">like %...%</option>
+                    <option value="like_start">like ...%</option>
+                    <option value="like_end">like %...</option>
+                </select>
+                <input type="text" v-model="filterValue">
+                <button class="btn" @click="doFilter">Go</button>
+                <button class="btn" @click="clearFilter">Clear</button>
             </div>
             <el-pagination
                 layout="jumper, prev, pager, next"
@@ -158,6 +172,9 @@ export default {
             saving: false,
             dialogInsert: false,
             dialogDelete: false,
+            filterCol: '',
+            filterValue: '',
+            filterMethod: 'equal',
         }
     },
 
@@ -175,18 +192,37 @@ export default {
         table() {
             return this.$store.state.activeTable;
         },
+
+        filterColumns() {
+            return this.columns.map(col => col.name);
+        },
     },
 
     watch: {
         table(name) {
-            this.resetActiveNode();
             this.currentPage = 1;
+
+            this.resetFilter();
+            this.resetActiveNode();
             this.initTable(name);
             this.resetScrollPosition();
         },
     },
 
     methods: {
+        clearFilter() {
+            this.currentPage = 1;
+            this.resetActiveNode();
+            this.resetFilter();
+            this.resetScrollPosition();
+            this.initTable();
+        },
+
+        doFilter() {
+            this.currentPage = 1;
+            this.initTable();
+        },
+
         openDialogDelete() {
             if (this.activeRow === -1) {
                 return alert('You need select a record to delete');
@@ -329,10 +365,17 @@ export default {
             Vue.set(this, 'activeItem', {});
         },
 
+        resetFilter() {
+            this.filterCol = '';
+            this.filterValue = '';
+            this.filterMethod = 'equal';
+        },
+
         changePage(page) {
             this.resetActiveNode();
-            this.initTable(this.table, page);
-            this.resetScrollPosition();
+            this.initTable(this.table, page).then(() => {
+                this.resetScrollPosition();
+            });
         },
 
         selectRow(row) {
@@ -363,11 +406,14 @@ export default {
                 page = page ? page : 1;
 
                 this.loading = true;
-
+                const {filterCol, filterValue, filterMethod} = this;
                 this.$ajax({
                     task: 'db.initTable',
                     name,
                     page,
+                    filterCol,
+                    filterValue,
+                    filterMethod,
                 })
                 .then(res => {
                     if (res.error) {
@@ -412,6 +458,15 @@ export default {
 
         .header-toolbar {
             flex: 1;
+
+            select {
+                width: unset;
+                margin: 0;
+            }
+
+            input {
+                margin: 0;
+            }
         }
     }
 
