@@ -312,7 +312,7 @@ export default {
             const cols = this.getConditionColumns();
             const condition = {};
             cols.forEach(col => {
-                condition[col] = this.activeItem[col]
+                condition[col] = this.activeItem[col];
             });
 
             this.$ajax({
