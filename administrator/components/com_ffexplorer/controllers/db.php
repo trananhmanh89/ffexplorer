@@ -7,6 +7,36 @@ defined('_JEXEC') or die('Restricted access');
 
 class FfexplorerControllerDb extends BaseController
 {
+    public function deleteRecord()
+    {
+        $this->checkToken();
+
+        $table = $this->input->get('table');
+        $condition = @json_decode($this->input->get('condition', '', 'raw'));
+
+        if (!$table) {
+            $this->response('error', 'Table is empty');
+        }
+
+        if (!$condition) {
+            $this->response('error', 'Condition is empty');
+        }
+
+        $db = Factory::getDbo();
+        $query = $db->getQuery(true)->delete($db->qn($table));
+        
+        foreach ($condition as $k => $v) {
+            $query->where($db->qn($k) . '=' . $db->q($v));
+        }
+
+        try {
+            $db->setQuery($query, 0, 1)->execute();
+            $this->response('success', true);
+        } catch (Exception $e) {
+            $this->response('error', $e->getMessage());
+        }
+    }
+
     public function insertRecord()
     {
         $this->checkToken();

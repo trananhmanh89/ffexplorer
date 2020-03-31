@@ -6,11 +6,11 @@
                 <button 
                     class="btn btn-success" 
                     type="button"
-                    @click="dialogInsert = true">Insert record</button>
+                    @click="openDialogInsert">Insert record</button>
                 <button 
                     class="btn btn-danger" 
                     type="button"
-                    @click="confirmDelete">Delete record</button>
+                    @click="openDialogDelete">Delete record</button>
             </div>
             <el-pagination
                 layout="jumper, prev, pager, next"
@@ -21,7 +21,7 @@
                 @current-change="changePage">
             </el-pagination>
         </div>
-        <div class="d-content-inner" :style="{height, overflow: this.loading ? 'hidden' : 'auto'}">
+        <div class="d-content-inner" :style="{height, overflow: loading ? 'hidden' : 'auto'}">
             <table class="d-content-table" border="1" bordercolor="#ddd">
                 <thead>
                     <tr>
@@ -78,17 +78,17 @@
             :visible.sync="dialogInsert">
             <form class="form-insert" v-loading="saving">
                 <table>
-                    <tr v-for="column in columns" :key="column.name">
+                    <tr v-for="column in cloneColumns" :key="column.name">
                         <th>{{column.name}}</th>
                         <td>{{column.type}}</td>
                         <td>
                             <span v-if="column.extra === 'auto_increment'">Auto Increment</span>
                             <span v-else-if="column.default === 'CURRENT_TIMESTAMP'">Current Timestamp</span>
                             <input 
-                                v-else 
                                 type="text"
-                                :name="column.name"
-                                :value="column.default">
+                                v-else 
+                                v-model="column.default"
+                                :name="column.name">
                         </td>
                     </tr>
                 </table>
@@ -105,6 +105,33 @@
                     @click="insertRecord">Insert</el-button>
             </span>
         </el-dialog>
+        <el-dialog
+            width="50%"
+            :close-on-click-modal="false"
+            :close-on-press-escape="!saving"
+            :show-close="!saving"
+            :destroy-on-close="true"
+            :custom-class="'dialog-insert'"
+            :title="'Table `' + table + '`: Do you want to delete this record?'"
+            :visible.sync="dialogDelete">
+            <table>
+                <tr v-for="(value, key) in activeItem" :key="key">
+                    <th>{{key}}</th>
+                    <td>{{value.substring(0, 100)}}</td>
+                </tr>
+            </table>
+            <span slot="footer" class="dialog-footer">
+                <el-button 
+                    size="small" 
+                    :disabled="saving"
+                    @click="dialogDelete = false">Close</el-button>
+                <el-button 
+                    size="small" 
+                    type="primary" 
+                    :loading="saving"
+                    @click="deleteRecord">Delete</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -117,6 +144,7 @@ export default {
         return {
             loading: false,
             columns: [],
+            cloneColumns: [],
             total: 0,
             items: [],
             height: '0px',
@@ -129,6 +157,7 @@ export default {
             dialogEdit: false,
             saving: false,
             dialogInsert: false,
+            dialogDelete: false,
         }
     },
 
@@ -158,33 +187,53 @@ export default {
     },
 
     methods: {
-        confirmDelete() {
+        openDialogDelete() {
             if (this.activeRow === -1) {
                 return alert('You need select a record to delete');
             }
 
-            this.$confirm('This will permanently delete selected record. Continue?', 'Delete row record', {
-                confirmButtonText: 'Delete',
-                cancelButtonText: 'Cancel',
-                showClose: false,
-                closeOnClickModal: false,
-                closeOnPressEscape: false,
-                closeOnHashChange: false,
-                confirmButtonLoading: false,
-                showCancelButton: true,
-                beforeClose: (action, instance, done) => {
-                    if (action == 'confirm') {
-                        done();
-                    } else {
-                        done();
-                    }
+            this.dialogDelete = true;
+        },
+
+        deleteRecord() {
+            this.saving = true;
+
+            const cols = this.getConditionColumns();
+            const condition = {};
+            cols.forEach(col => {
+                condition[col] = this.activeItem[col]
+            });
+
+            this.$ajax({
+                task: 'db.deleteRecord',
+                table: this.table,
+                condition: JSON.stringify(condition),
+            })
+            .then(res => {
+                if (res.error) {
+                    return alert(res.error);
                 }
-            }).then(() => {
-                this.$message({
-                    type: 'success',
-                    message: 'Record is deleted'
-                });
-            }).catch(() => {});
+
+                if (res.success) {
+                    this.$message({
+                        type: 'success',
+                        message: 'delete succesfully'
+                    });
+                    return this.initTable(this.table, this.currentPage);
+                }
+            })
+            .catch(error => {
+                alert('delete error');
+            })
+            .finally(() => {
+                this.saving = false;
+                this.dialogDelete = false;
+            });
+        },
+
+        openDialogInsert() {
+            Vue.set(this, 'cloneColumns', JSON.parse(JSON.stringify(this.columns)));
+            this.dialogInsert = true;
         },
         
         insertRecord() {
@@ -420,10 +469,15 @@ export default {
                 th {
                     text-align: unset;
                     padding: 5px;
+                    white-space: nowrap;
                 }
 
                 td {
                     padding: 5px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    max-width: 300px;
 
                     input {
                         margin: 0;
