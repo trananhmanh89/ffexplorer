@@ -2,8 +2,18 @@
     <div class="d-content" 
         v-loading="loading">
         <div class="d-content-header">
+            <div class="header-toolbar" v-if="table">
+                <button 
+                    class="btn btn-success" 
+                    type="button"
+                    @click="dialogInsert = true">Insert record</button>
+                <button 
+                    class="btn btn-danger" 
+                    type="button"
+                    @click="confirmDelete">Delete record</button>
+            </div>
             <el-pagination
-                layout="prev, pager, next, jumper"
+                layout="jumper, prev, pager, next"
                 :page-size="50"
                 :hide-on-single-page="true"
                 :current-page.sync="currentPage"
@@ -57,6 +67,44 @@
                     @click="saveNode">Save</el-button>
             </span>
         </el-dialog>
+        <el-dialog
+            width="60%"
+            :close-on-click-modal="false"
+            :close-on-press-escape="!saving"
+            :show-close="!saving"
+            :destroy-on-close="true"
+            :custom-class="'dialog-insert'"
+            :title="table + ' - Insert record'"
+            :visible.sync="dialogInsert">
+            <form class="form-insert" v-loading="saving">
+                <table>
+                    <tr v-for="column in columns" :key="column.name">
+                        <th>{{column.name}}</th>
+                        <td>{{column.type}}</td>
+                        <td>
+                            <span v-if="column.extra === 'auto_increment'">Auto Increment</span>
+                            <span v-else-if="column.default === 'CURRENT_TIMESTAMP'">Current Timestamp</span>
+                            <input 
+                                v-else 
+                                type="text"
+                                :name="column.name"
+                                :value="column.default">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            <span slot="footer" class="dialog-footer">
+                <el-button 
+                    size="small" 
+                    :disabled="saving"
+                    @click="dialogInsert = false">Close</el-button>
+                <el-button 
+                    size="small" 
+                    type="primary" 
+                    :loading="saving"
+                    @click="insertRecord">Insert</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -80,6 +128,7 @@ export default {
             dialogValue: '',
             dialogEdit: false,
             saving: false,
+            dialogInsert: false,
         }
     },
 
@@ -94,20 +143,82 @@ export default {
     },
 
     computed: {
-        activeTable() {
+        table() {
             return this.$store.state.activeTable;
         },
     },
 
     watch: {
-        activeTable(name) {
+        table(name) {
             this.resetActiveNode();
             this.currentPage = 1;
             this.initTable(name);
+            this.resetScrollPosition();
         },
     },
 
     methods: {
+        confirmDelete() {
+            if (this.activeRow === -1) {
+                return alert('You need select a record to delete');
+            }
+
+            this.$confirm('This will permanently delete selected record. Continue?', 'Delete row record', {
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                showClose: false,
+                closeOnClickModal: false,
+                closeOnPressEscape: false,
+                closeOnHashChange: false,
+                confirmButtonLoading: false,
+                showCancelButton: true,
+                beforeClose: (action, instance, done) => {
+                    if (action == 'confirm') {
+                        done();
+                    } else {
+                        done();
+                    }
+                }
+            }).then(() => {
+                this.$message({
+                    type: 'success',
+                    message: 'Record is deleted'
+                });
+            }).catch(() => {});
+        },
+        
+        insertRecord() {
+            this.saving = true;
+
+            const data = jQuery('form.form-insert').serializeArray();
+
+            this.$ajax({
+                task: 'db.insertRecord',
+                table: this.table,
+                data: JSON.stringify(data),
+            })
+            .then(res => {
+                if (res.error) {
+                    return alert(res.error);
+                }
+
+                if (res.success) {
+                    this.$message({
+                        type: 'success',
+                        message: 'insert succesfully'
+                    });
+                    return this.initTable(this.table, this.currentPage);
+                }
+            })
+            .catch(error => {
+                alert('insert error');
+            })
+            .finally(() => {
+                this.saving = false;
+                this.dialogInsert = false;
+            });
+        },
+
         saveNode() {
             this.saving = true;
 
@@ -119,7 +230,7 @@ export default {
 
             this.$ajax({
                 task: 'db.saveNode',
-                table: this.$store.state.activeTable,
+                table: this.table,
                 condition: JSON.stringify(condition),
                 column: this.activeColumn,
                 value: this.dialogValue,
@@ -136,6 +247,9 @@ export default {
 
                 this.activeItem[this.activeColumn] = res.result;
                 this.dialogValue = res.result;
+            })
+            .catch(error => {
+                alert('save error');
             })
             .finally(() => {
                 this.saving = false;
@@ -166,7 +280,8 @@ export default {
 
         changePage(page) {
             this.resetActiveNode();
-            this.initTable(this.activeTable, page);
+            this.initTable(this.table, page);
+            this.resetScrollPosition();
         },
 
         selectRow(row) {
@@ -192,33 +307,42 @@ export default {
         }, 100),
 
         initTable(name, page) {
-            page = page ? page : 1;
+            return new Promise((resolve, reject) => {
+                name = name ? name : this.table;
+                page = page ? page : 1;
 
-            this.loading = true;
+                this.loading = true;
 
-            this.$ajax({
-                task: 'db.initTable',
-                name,
-                page,
-            })
-            .then(res => {
-                if (res.error) {
-                    return alert(res.error);
-                }
+                this.$ajax({
+                    task: 'db.initTable',
+                    name,
+                    page,
+                })
+                .then(res => {
+                    if (res.error) {
+                        return alert(res.error);
+                    }
 
-                if (res.data) {
-                    this.total = +res.data.total;
-                    Vue.set(this, 'columns', res.data.columns);
-                    Vue.set(this, 'items', res.data.items);
-
-                    const $inner = this.$el.querySelector('.d-content-inner');
-                    $inner.scrollTop = 0;
-                    $inner.scrollLeft = 0;
-                }
-            })
-            .finally(() => {
-                this.loading = false;
+                    if (res.data) {
+                        this.total = +res.data.total;
+                        Vue.set(this, 'columns', res.data.columns);
+                        Vue.set(this, 'items', res.data.items);
+                    }
+                })
+                .catch(error => {
+                    alert('init table error');
+                })
+                .finally(() => {
+                    this.loading = false;
+                    resolve();
+                });
             });
+        },
+
+        resetScrollPosition() {
+            const $inner = this.$el.querySelector('.d-content-inner');
+            $inner.scrollTop = 0;
+            $inner.scrollLeft = 0;
         }
     },
 }
@@ -233,6 +357,11 @@ export default {
 
     .d-content-header {
         min-height: 38px;
+        display: flex;
+
+        .header-toolbar {
+            flex: 1;
+        }
     }
 
     .d-content-inner {
@@ -278,6 +407,29 @@ export default {
         
         .el-dialog__footer {
             padding: 10px;
+        }
+    }
+
+    .dialog-insert {
+        table {
+            width: 100%;
+
+            > tr {
+                border-bottom: dashed 1px #ddd;
+
+                th {
+                    text-align: unset;
+                    padding: 5px;
+                }
+
+                td {
+                    padding: 5px;
+
+                    input {
+                        margin: 0;
+                    }
+                }
+            }
         }
     }
 }

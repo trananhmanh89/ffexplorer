@@ -7,6 +7,41 @@ defined('_JEXEC') or die('Restricted access');
 
 class FfexplorerControllerDb extends BaseController
 {
+    public function insertRecord()
+    {
+        $this->checkToken();
+
+        $data = @json_decode($this->input->get('data', '', 'raw'));
+        if (!$data || !is_array($data)) {
+            $this->response('error', 'data missing');
+        }
+
+        $table = $this->input->get('table');
+        if (!$table) {
+            $this->response('error', 'table missing');
+        }
+
+        $db = Factory::getDbo();
+        $columns = array();
+        $values = array();
+        foreach ($data as $item) {
+            $columns[] = $item->name;
+            $values[] = $db->q($item->value);
+        }
+
+        $query = $db->getQuery(true)
+            ->insert($db->qn($table))
+            ->columns($db->qn($columns))
+            ->values(implode(',', $values));
+       
+        try {
+            $db->setQuery($query)->execute();
+            $this->response('success', true);
+        } catch (Exception $e) {
+            $this->response('error', $e->getMessage());
+        }
+    }
+
     public function saveNode()
     {
         $this->checkToken();
@@ -70,7 +105,11 @@ class FfexplorerControllerDb extends BaseController
             $this->response('error', 'Table is not existed');
         }
 
-        $query = "SELECT `COLUMN_NAME` AS `name`, `COLUMN_KEY` AS `key`
+        $query = "SELECT `COLUMN_NAME` AS `name`, 
+                        `COLUMN_KEY` AS `key`, 
+                        `COLUMN_DEFAULT` AS `default`, 
+                        `COLUMN_TYPE` AS `type`,
+                        `EXTRA` AS extra
             FROM information_schema.`columns`
             WHERE `table_schema` = '$dbName' AND `table_name` = '$name'";
         

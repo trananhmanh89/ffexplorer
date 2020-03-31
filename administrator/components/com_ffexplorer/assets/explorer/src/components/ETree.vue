@@ -749,7 +749,9 @@ export default {
                     return this.refreshNode(this.contextItem).then(() => done());
                 }
             })
-            .catch(error => {});
+            .catch(error => {
+                alert('create new error');
+            });
         },
 
         doRename(task, instance, done) {
@@ -778,7 +780,9 @@ export default {
                     });
                 }
             })
-            .catch(error => {});
+            .catch(error => {
+                alert('rename error')
+            });
         },
 
         doDelete(task, instance, done) {
@@ -808,7 +812,9 @@ export default {
                     });
                 }
             })
-            .catch(error => {});
+            .catch(error => {
+                alert('delete error.')
+            });
         },
 
         setTreeHeight: debounce(function() {
