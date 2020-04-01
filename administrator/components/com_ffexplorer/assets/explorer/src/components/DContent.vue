@@ -3,28 +3,35 @@
         v-loading="loading">
         <div class="d-content-header">
             <div class="header-toolbar" v-if="table">
-                <button 
-                    class="btn btn-success" 
-                    type="button"
-                    @click="openDialogInsert">Insert record</button>
-                <button 
-                    class="btn btn-danger" 
-                    type="button"
-                    @click="openDialogDelete">Delete record</button>
-                <span style="margin-left: 10px; margin-right: 5px;">Filter</span>
-                <select v-model="filterCol">
-                    <option value="">Select column</option>
-                    <option v-for="col in filterColumns" :key="col">{{col}}</option>
-                </select>
-                <select v-model="filterMethod">
-                    <option value="equal">=</option>
-                    <option value="like_both">like %...%</option>
-                    <option value="like_start">like ...%</option>
-                    <option value="like_end">like %...</option>
-                </select>
-                <input type="text" v-model="filterValue">
-                <button class="btn" @click="doFilter">Go</button>
-                <button class="btn" @click="clearFilter">Clear</button>
+                <div class="header-toolbar-col" style="margin-right: 20px;">
+                    <button 
+                        class="btn btn-success" 
+                        type="button"
+                        @click="openDialogInsert">Insert</button>
+                    <button 
+                        class="btn btn-danger" 
+                        type="button"
+                        @click="openDialogDelete">Delete</button>
+                </div>
+                <div class="header-toolbar-col filter-bar">
+                    <div class="filter-col" style="margin-right: 5px;">
+                        <select v-model="filterCol">
+                            <option value="">Select column</option>
+                            <option v-for="col in filterColumns" :key="col">{{col}}</option>
+                        </select>
+                        <select v-model="filterMethod">
+                            <option value="equal">=</option>
+                            <option value="like_both">like %...%</option>
+                            <option value="like_start">like ...%</option>
+                            <option value="like_end">like %...</option>
+                        </select>
+                        <input type="text" placeholder="value of column" v-model="filterValue">
+                    </div>
+                    <div class="filter-col">
+                        <button class="btn btn-primary" @click="doFilter">Filter</button>
+                        <button class="btn" @click="clearFilter">Clear</button>
+                    </div>
+                </div>
             </div>
             <el-pagination
                 layout="jumper, prev, pager, next"
@@ -397,7 +404,7 @@ export default {
             const $ = jQuery;
             const wHeight = $(window).height();
 
-            this.height = (wHeight - $('.d-content').offset().top - 73) + 'px';
+            this.height = (wHeight - $('.d-content-inner').offset().top - 35) + 'px';
         }, 100),
 
         initTable(name, page) {
@@ -424,6 +431,7 @@ export default {
                         this.total = +res.data.total;
                         Vue.set(this, 'columns', res.data.columns);
                         Vue.set(this, 'items', res.data.items);
+                        this.setContentHeight();
                     }
                 })
                 .catch(error => {
@@ -462,6 +470,21 @@ export default {
 
         .header-toolbar {
             flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+
+            .header-toolbar-col {
+                margin-bottom: 5px;
+            }
+
+            .filter-bar {
+                display: flex;
+                flex-wrap: wrap;
+
+                .filter-col {
+                    margin-bottom: 5px;
+                }
+            }
 
             select {
                 width: unset;
@@ -470,6 +493,7 @@ export default {
 
             input {
                 margin: 0;
+                width: 150px;
             }
         }
     }
