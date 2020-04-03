@@ -98,14 +98,7 @@ class FfexplorerControllerDb extends BaseController
 
         try {
             $db->setQuery($query, 0, 1)->execute();
-
-            $query = $db->getQuery(true)
-                ->select($db->qn($column))
-                ->from($db->qn($table))
-                ->where($where);
-
-            $result = $db->setQuery($query, 0, 1)->loadResult();
-            $this->response('result', $result);
+            $this->response('success', true);
         } catch (Exception $e) {
             $this->response('error', $e->getMessage());
         }
@@ -199,14 +192,14 @@ class FfexplorerControllerDb extends BaseController
         $this->checkToken();
         $config = Factory::getConfig();
         $dbName = $config->get('db');
+        $prefix = $config->get('dbprefix');
 
         $db = Factory::getDbo();
         $query = "SELECT TABLE_NAME AS `name`,
                 (DATA_LENGTH + INDEX_LENGTH) AS `size`
-            FROM
-                information_schema.TABLES
-            WHERE
-                TABLE_SCHEMA = '$dbName'
+            FROM information_schema.TABLES
+            WHERE TABLE_SCHEMA = '$dbName'
+            AND TABLE_NAME LIKE '$prefix%'
             ORDER BY `name` ASC";
 
         $list = $db->setQuery($query)->loadObjectList();

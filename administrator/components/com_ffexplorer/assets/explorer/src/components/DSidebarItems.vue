@@ -145,6 +145,8 @@ export default {
         .item-size {
             position: relative;
             text-align: right;
+            white-space: nowrap;
+            border-left: dashed 1px #eaeaea;
 
             span {
                 position: relative;

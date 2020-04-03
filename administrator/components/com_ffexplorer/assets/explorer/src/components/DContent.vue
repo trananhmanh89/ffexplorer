@@ -339,8 +339,7 @@ export default {
                     message: 'Save successfully',
                 });
 
-                this.activeItem[this.activeColumn] = res.result;
-                this.dialogValue = res.result;
+                return this.initTable(this.table, this.currentPage);
             })
             .catch(error => {
                 alert('save error');

@@ -27,6 +27,8 @@
 .d-sidebar-items .d-item-list .item-size {
       position: relative;
       text-align: right;
+      white-space: nowrap;
+      border-left: dashed 1px #eaeaea;
 }
 .d-sidebar-items .d-item-list .item-size span {
         position: relative;
