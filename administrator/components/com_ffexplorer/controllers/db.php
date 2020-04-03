@@ -137,6 +137,10 @@ class FfexplorerControllerDb extends BaseController
             WHERE `table_schema` = '$dbName' AND `table_name` = '$name'";
         
         $columns = $db->setQuery($query)->loadObjectList();
+        $columns = array_map(function($col) {
+            $col->default = trim($col->default, "'");
+            return $col;
+        }, $columns);
         
         $query = $this->getListQuery($name)->select('COUNT(*)');
         $total = $db->setQuery($query)->loadResult();
