@@ -138,7 +138,7 @@
             <table>
                 <tr v-for="(value, key) in activeItem" :key="key">
                     <th>{{key}}</th>
-                    <td>{{value.substring(0, 100)}}</td>
+                    <td>{{value ? ('' + value).substring(0, 100) : ''}}</td>
                 </tr>
             </table>
             <span slot="footer" class="dialog-footer">
