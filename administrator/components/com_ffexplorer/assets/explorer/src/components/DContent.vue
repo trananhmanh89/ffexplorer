@@ -57,7 +57,7 @@
                         <td v-for="(value, column) in item" 
                             :key="column"
                             :class="{selected: activeNode === (row + column + '')}"
-                            @click="selectNode(row + column + '', item, column)">{{value.substring(0, 100)}}</td>
+                            @click="selectNode(row + column + '', item, column)">{{value ? ('' + value).substring(0, 100) : ''}}</td>
                     </tr>
                 </tbody>
             </table>
