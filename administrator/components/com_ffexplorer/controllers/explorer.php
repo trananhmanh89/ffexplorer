@@ -170,7 +170,7 @@ class FfexplorerControllerExplorer extends BaseController
         }
 
         // Make the filename safe
-        $file['name'] = File::makeSafe($file['name']);
+        $file['name'] = $this->makeSafeFileName($file['name']);
 
         // We need a url safe name
         $fileparts = pathinfo(JPATH_ROOT . $path . '/' . $file['name']);
@@ -290,7 +290,7 @@ class FfexplorerControllerExplorer extends BaseController
         $name = $this->input->getString('name');
         $path = $this->input->getString('path');
 
-        $name = File::makeSafe($name);
+        $name = $this->makeSafeFileName($name);
 
         if (!$name || !$path) {
             die(json_encode(array('error' => 'empty')));
@@ -402,7 +402,7 @@ class FfexplorerControllerExplorer extends BaseController
         $newName = $this->input->getString('newName');
         $oldPath = $this->input->getString('oldPath');
 
-        $newName = File::makeSafe($newName);
+        $newName = $this->makeSafeFileName($newName);
 
         if (!$newName || !$oldPath) {
             $this->response('error', 'empty');
@@ -467,5 +467,12 @@ class FfexplorerControllerExplorer extends BaseController
     protected function response($type = 'success', $data)
     {
         die(@json_encode(array($type => $data)));
+    }
+
+    protected function makeSafeFileName($str)
+    {
+        $str = rtrim($str, '.');
+		$regex = array('#(\.){2,}#', '#[^A-Za-z0-9\.\_\- ]#');
+		return trim(preg_replace($regex, '', $str));
     }
 }
