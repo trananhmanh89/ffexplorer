@@ -168,7 +168,7 @@ class FfexplorerControllerDb extends BaseController
         $filterValue = $this->input->get('filterValue', '', 'raw');
         $filterMethod = $this->input->get('filterMethod', '', 'raw');
 
-        if ($filterCol && $filterValue && $filterMethod) {
+        if ($filterCol && $filterMethod) {
             switch ($filterMethod) {
                 case 'like_both':
                     $query->where($db->qn($filterCol) . ' LIKE ' . $db->q('%' . $filterValue . '%'));
