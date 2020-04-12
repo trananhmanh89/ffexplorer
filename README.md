@@ -12,6 +12,7 @@ FF Explorer is file manager on joomla site. Features are supported:
 - upload file
 - download file
 - change file permission
+- extract archived files: 'zip', 'tar', 'tgz', 'gz', 'gzip', 'tbz2', 'bz2', 'bzip2'
 - and more ...
 
 FF Explore now supports editing database
