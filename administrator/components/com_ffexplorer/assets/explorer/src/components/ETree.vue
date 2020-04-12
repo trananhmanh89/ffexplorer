@@ -11,6 +11,9 @@
             <li style="border-bottom: dashed 1px #ddd;" v-if="!isRoot" @click="compress">
                 <a>Compress to Zip</a>
             </li>
+            <li style="border-bottom: dashed 1px #ddd;" v-if="isArchive" @click="extract">
+                <a>Extract to ...</a>
+            </li>
             <li v-if="contextItem.type === 'folder'" @click="newFile">
                 <a>New File</a>
             </li>
@@ -160,7 +163,7 @@ export default {
         return {
             treeData: [{
                 name: 'root',
-                path: '/',
+                path: '\\',
                 type: 'folder',
             }],
             treeHeight: '0px',
@@ -195,14 +198,14 @@ export default {
     mounted() {
         this.$ajax({
             task: 'explorer.explodeFolder',
-            path: '/',
+            path: '\\',
         })
         .then(res => {
             if (res.error) {
                 return alert(res.error);
             }
 
-            const root = this.treeData.find(item => item.path === '/');
+            const root = this.treeData.find(item => item.path === '\\');
             Vue.set(root, 'children', arrange(res));
         })
         .catch(error => {
@@ -238,7 +241,7 @@ export default {
 
     computed: {
         isRoot() {
-            return this.contextItem.path === '/';
+            return this.contextItem.path === '\\';
         },
 
         uploadData() {
@@ -249,6 +252,29 @@ export default {
             };
             
             return jQuery.extend(uploadData, params);
+        },
+
+        isArchive() {
+            if (!this.contextItem.type || this.contextItem.type === 'folder') {
+                return false;
+            }
+
+            const frags = this.contextItem.name.split('.');
+            if (frags.length < 2) {
+                return false;
+            }
+
+            if (frags.length === 2 && frags[0] === '') {
+                return false;
+            }
+
+            const ext = frags.pop();
+            const archiveExt = ['zip', 'tar', 'tgz', 'gz', 'gzip', 'tbz2', 'bz2', 'bzip2'];
+            if (archiveExt.indexOf(ext) === -1) {
+                return false;
+            }
+            
+            return true;
         },
 
         permission() {
@@ -279,6 +305,68 @@ export default {
     },
 
     methods: {
+        extract() {
+            const source = this.contextItem.path;
+            const frags = source.split('\\');
+            frags.pop();
+            const path = (frags.length === 1 ? '\\' : '') + frags.join('\\');
+
+            this.$prompt('', 'Extract to ...', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+                inputPattern: /^[^,:\*\?"<>|]+$/,
+                inputValue: path,
+                inputErrorMessage: 'Path should not contain ^ , : * ? " < > |',
+                showClose: false,
+                closeOnClickModal: false,
+                closeOnPressEscape: false,
+                closeOnHashChange: false,
+                confirmButtonLoading: false,
+                showCancelButton: true,
+                beforeClose: (action, instance, done) => {
+                    if (action == 'confirm') {
+                        const target = instance.inputValue.replace('/', '\\');
+                        instance.showCancelButton = false;
+                        instance.confirmButtonLoading = true;
+
+                        this.$ajax({
+                            task: 'explorer.extract',
+                            source,
+                            target,
+                        })
+                        .then(res => {
+                            if (res.error) {
+                                return alert(res.error);
+                            }
+
+                            const item = this.findItemByPath(this.treeData[0], target);
+                            if (item) {
+                                return this.refreshNode(item).then(() => {
+                                    done();
+                                });
+                            }
+
+                            done();
+                        })
+                        .catch(error => {
+                            alert('extract error');
+                        })
+                        .finally(() => {
+                            instance.showCancelButton = true;
+                            instance.confirmButtonLoading = false;
+                        });
+                    } else {
+                        done();
+                    }
+                }
+            }).then(({ value }) => {
+                this.$message({
+                    type: 'success',
+                    message: 'Extract done.',
+                });
+            }).catch(() => {});;
+        },
+
         download() {
             jQuery('.context-download-file').remove();
 
@@ -324,7 +412,6 @@ export default {
             })
             .catch(error => {
                 alert('error');
-                console.log(error);
             })
             .finally(() => {
                 loading.close();
@@ -563,7 +650,7 @@ export default {
                     type: 'success',
                     message: 'New file has been created: ' + value
                 });
-            }).catch(() => {});;
+            }).catch(() => {});
         },
 
         newFolder() {
@@ -590,7 +677,7 @@ export default {
                     type: 'success',
                     message: 'New Folder has been created: ' + value
                 });
-            }).catch(() => {});;
+            }).catch(() => {});
         },
 
         renameFolder() {
@@ -781,7 +868,7 @@ export default {
                 }
             })
             .catch(error => {
-                alert('rename error')
+                alert('rename error');
             });
         },
 
@@ -813,7 +900,7 @@ export default {
                 }
             })
             .catch(error => {
-                alert('delete error.')
+                alert('delete error.');
             });
         },
 
@@ -825,7 +912,7 @@ export default {
         }, 100),
 
         getParent(root, path) {
-            var node;
+            let node;
 
             root.children.some(n => {
                 if (n.path === path) {
@@ -837,7 +924,27 @@ export default {
                 }
             });
 
-            return node || null;
+            return node;
+        },
+
+        findItemByPath(root, path) {
+            let node;
+
+            if (root.path === path) {
+                return root;
+            }
+
+            root.children.some(n => {
+                if (n.path === path) {
+                    return node = n;
+                }
+
+                if (n.children) {
+                    return node = this.findItemByPath(n, path);
+                }
+            });
+
+            return node;
         },
     }
 }

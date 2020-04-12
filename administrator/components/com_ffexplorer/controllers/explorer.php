@@ -8,6 +8,7 @@
  * @license     MIT
  */
 
+use Joomla\Archive\Archive;
 use Joomla\Archive\Zip;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
@@ -20,6 +21,32 @@ defined('_JEXEC') or die('Restricted access');
 
 class FfexplorerControllerExplorer extends BaseController
 {
+    public function extract()
+    {
+        $this->checkToken();
+        
+        $target = $this->input->get('target', '', 'raw');
+        $source = $this->input->get('source', '', 'raw');
+
+        if (!$target || !$source) {
+            $this->response('error', 'Path not found');
+        }
+
+        $target = JPATH_ROOT . $target;
+        $source = JPATH_ROOT . $source;
+        if (!is_file($source) || !is_dir($target)) {
+            $this->response('error', 'Path not found');
+        }
+
+        try {
+            $archive = new Archive();
+            $archive->extract($source, $target);
+
+            $this->response('success', true);
+        } catch (Exception $e) {
+            $this->response('error', $e->getMessage());
+        }
+    }
     public function download()
     {
         $this->checkToken();

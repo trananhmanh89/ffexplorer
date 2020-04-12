@@ -34,7 +34,7 @@ export default {
 
     data() {
         return {
-            isOpen: this.item.path === '/' ? true : false,
+            isOpen: this.item.path === '\\' ? true : false,
             fetching: false,
         }
     },
@@ -49,7 +49,7 @@ export default {
         },
 
         isRoot() {
-            return this.item.path === '/';
+            return this.item.path === '\\';
         },
 
         isImage() {
