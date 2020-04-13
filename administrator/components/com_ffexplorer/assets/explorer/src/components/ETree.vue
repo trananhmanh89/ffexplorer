@@ -130,7 +130,9 @@
             :title="this.previewImage.name" 
             :append-to-body="true"
             :visible.sync="previewImageDialog">
-            <img style="box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);" :src="this.previewImage.path">
+            <img style="box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.75);" 
+                :key="this.previewImage.path" 
+                :src="this.previewImage.path">
         </el-dialog>
     </div>
 </template>
@@ -235,7 +237,10 @@ export default {
                 path: this.rootUri + path,
                 name,
             });
-            this.previewImageDialog = true;
+            
+            setTimeout(() => {
+                this.previewImageDialog = true;
+            });
         });
     },
 
