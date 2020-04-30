@@ -181,7 +181,7 @@ class FfexplorerControllerExplorer extends BaseController
             $this->response('error', 'empty path');
         }
 
-        $file = $this->input->files->get('file', array(), 'array');
+        $file = $this->input->files->get('file', array(), 'raw');
         $contentLength = (int) $file['size'];
         $mediaHelper = new MediaHelper;
         $postMaxSize = $mediaHelper->toBytes(ini_get('post_max_size'));
@@ -196,22 +196,7 @@ class FfexplorerControllerExplorer extends BaseController
             $this->response('error', 'File too large');
         }
 
-        // Make the filename safe
-        $file['name'] = $this->makeSafeFileName($file['name']);
-
-        // We need a url safe name
-        $fileparts = pathinfo(JPATH_ROOT . $path . '/' . $file['name']);
-
-        // Transform filename to punycode, check extension and transform it to lowercase
-        $fileparts['filename'] = PunycodeHelper::toPunycode($fileparts['filename']);
-        $tempExt = !empty($fileparts['extension']) ? strtolower($fileparts['extension']) : '';
-
-        // Neglect other than non-alphanumeric characters, hyphens & underscores.
-        $safeFileName = preg_replace(array("/[\\s]/", '/[^a-zA-Z0-9_\-]/'), array('_', ''), $fileparts['filename']) . '.' . $tempExt;
-
-        $file['name'] = $safeFileName;
-
-        $file['filepath'] = Path::clean(JPATH_ROOT . $path . '/' . $file['name']);
+        $file['filepath'] = JPATH_ROOT . $path . '/' . $file['name'];
 
         if (File::exists($file['filepath']))
         {
@@ -223,7 +208,7 @@ class FfexplorerControllerExplorer extends BaseController
             $this->response('error', 'File error');
         }
 
-        if (File::upload($file['tmp_name'], $file['filepath'])) {
+        if (File::upload($file['tmp_name'], $file['filepath'], false, true)) {
             $this->response('success', '');
         } else {
             $this->response('error', 'Upload error');
@@ -494,12 +479,5 @@ class FfexplorerControllerExplorer extends BaseController
     protected function response($type = 'success', $data)
     {
         die(@json_encode(array($type => $data)));
-    }
-
-    protected function makeSafeFileName($str)
-    {
-        $str = rtrim($str, '.');
-		$regex = array('#(\.){2,}#', '#[^A-Za-z0-9\.\_\- ]#');
-		return trim(preg_replace($regex, '', $str));
     }
 }
