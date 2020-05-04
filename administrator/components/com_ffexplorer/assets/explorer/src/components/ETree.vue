@@ -89,8 +89,8 @@
                     </tr>
                     <tr>
                         <td>Read</td>
-                        <td><input type="checkbox" v-model="chmod.userRread"></td>
-                        <td><input type="checkbox" v-model="chmod.groupRread"></td>
+                        <td><input type="checkbox" v-model="chmod.userRead"></td>
+                        <td><input type="checkbox" v-model="chmod.groupRead"></td>
                         <td><input type="checkbox" v-model="chmod.worldRead"></td>
                     </tr>
                     <tr>
@@ -178,10 +178,10 @@ export default {
             permissionDialog: false,
             permissionLoading: false,
             chmod: {
-                userRread: false,
+                userRead: false,
                 userWrite: false,
                 userExecute: false,
-                groupRread: false,
+                groupRead: false,
                 groupWrite: false,
                 groupExecute: false,
                 worldRead: false,
@@ -291,11 +291,11 @@ export default {
                 const val = this.chmod[key];
 
                 if (val) {
-                    user = key === 'userRread' ? user + 4 : user;
+                    user = key === 'userRead' ? user + 4 : user;
                     user = key === 'userWrite' ? user + 2 : user;
                     user = key === 'userExecute' ? user + 1 : user;
 
-                    group = key === 'groupRread' ? group + 4 : group;
+                    group = key === 'groupRead' ? group + 4 : group;
                     group = key === 'groupWrite' ? group + 2 : group;
                     group = key === 'groupExecute' ? group + 1 : group;
 
@@ -460,10 +460,10 @@ export default {
             this.permissionDialog = false;
 
             const chmod = {
-                userRread: false,
+                userRead: false,
                 userWrite: false,
                 userExecute: false,
-                groupRread: false,
+                groupRead: false,
                 groupWrite: false,
                 groupExecute: false,
                 worldRead: false,
@@ -497,7 +497,7 @@ export default {
                     
                     pieces.forEach((val, i) => {
                         if (i === 0 && val === 'r') {
-                            this.chmod.userRread =  true;
+                            this.chmod.userRead =  true;
                         }
                         if (i === 1 && val === 'w') {
                             this.chmod.userWrite =  true;
@@ -506,7 +506,7 @@ export default {
                             this.chmod.userExecute =  true;
                         }
                         if (i === 3 && val === 'r') {
-                            this.chmod.groupRread =  true;
+                            this.chmod.groupRead =  true;
                         }
                         if (i === 4 && val === 'w') {
                             this.chmod.groupWrite =  true;
