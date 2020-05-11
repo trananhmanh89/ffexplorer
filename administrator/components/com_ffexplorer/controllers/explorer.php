@@ -302,8 +302,6 @@ class FfexplorerControllerExplorer extends BaseController
         $name = $this->input->getString('name');
         $path = $this->input->getString('path');
 
-        $name = $this->makeSafeFileName($name);
-
         if (!$name || !$path) {
             die(json_encode(array('error' => 'empty')));
         }
@@ -413,8 +411,6 @@ class FfexplorerControllerExplorer extends BaseController
 
         $newName = $this->input->getString('newName');
         $oldPath = $this->input->getString('oldPath');
-
-        $newName = $this->makeSafeFileName($newName);
 
         if (!$newName || !$oldPath) {
             $this->response('error', 'empty');
