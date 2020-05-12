@@ -227,12 +227,12 @@ export default {
             this.$refs.menu.close();
         });
 
-        EventBus.$off('openContextMenu').$on('openContextMenu', data => {
+        EventBus.$on('openContextMenu', data => {
             this.$refs.menu.open(data.event);
             Vue.set(this, 'contextItem', data.item);
         });
 
-        EventBus.$off('openImage').$on('openImage', ({name, path}) => {
+        EventBus.$on('openImage', ({name, path}) => {
             Vue.set(this, 'previewImage', {
                 path: this.rootUri + path,
                 name,

@@ -74,7 +74,7 @@ export default {
             }
         });
 
-        EventBus.$off('openFileEditor').$on("openFileEditor", ({item, force}) => {
+        EventBus.$on("openFileEditor", ({item, force}) => {
             const inList = this.files.find(file => file.path === item.path);
             const currentIdx = this.files.findIndex(file => file.path === this.current);
 
@@ -109,7 +109,7 @@ export default {
             }
         });
 
-        EventBus.$off('fileNameChanged').$on('fileNameChanged', (newFile, oldFile) => {
+        EventBus.$on('fileNameChanged', (newFile, oldFile) => {
             const item = this.files.find(file => file.path === oldFile.path);
 
             if (item) {
@@ -122,7 +122,7 @@ export default {
             }
         });
 
-        EventBus.$off('fileDeleted').$on('fileDeleted', deletedFile => {
+        EventBus.$on('fileDeleted', deletedFile => {
             const item =  this.files.find(file => file.path === deletedFile.path);
 
             if (item) {
@@ -130,7 +130,7 @@ export default {
             }
         });
 
-        EventBus.$off('folderNameChanged').$on('folderNameChanged', (newFolder, oldFolder) => {
+        EventBus.$on('folderNameChanged', (newFolder, oldFolder) => {
             this.files.forEach(file => {
                 const idx = file.path.indexOf(oldFolder.path);
 
@@ -148,7 +148,7 @@ export default {
             });
         });
 
-        EventBus.$off('folderDeleted').$on('folderDeleted', deletedFolder => {
+        EventBus.$on('folderDeleted', deletedFolder => {
             this.files.forEach(file => {
                 const idx = file.path.indexOf(deletedFolder.path);
 

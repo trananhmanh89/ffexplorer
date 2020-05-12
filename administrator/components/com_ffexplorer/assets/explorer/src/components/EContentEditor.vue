@@ -21,7 +21,7 @@ export default {
         eData = {};
         editor = false;
 
-        EventBus.$off('fileNameChanged').$on('fileNameChanged', (newFile, oldFile) => {
+        EventBus.$on('fileNameChanged', (newFile, oldFile) => {
             if (eData[oldFile.path]) {
                 const data = eData[oldFile.path];
 
@@ -36,7 +36,7 @@ export default {
             }
         });
 
-        EventBus.$off('fileDeleted').$on('fileDeleted', deletedFile => {
+        EventBus.$on('fileDeleted', deletedFile => {
             const data = eData[deletedFile.path];
 
             if (!data) {
@@ -50,7 +50,7 @@ export default {
             }
         });
 
-        EventBus.$off('folderNameChanged').$on('folderNameChanged', (newFolder, oldFolder) => {
+        EventBus.$on('folderNameChanged', (newFolder, oldFolder) => {
             for (const key in eData) {
                 const idx = key.indexOf(oldFolder.path);
 
@@ -70,7 +70,7 @@ export default {
             }
         });
 
-        EventBus.$off('folderDeleted').$on('folderDeleted', deletedFolder => {
+        EventBus.$on('folderDeleted', deletedFolder => {
             for (const key in eData) {
                 const idx = key.indexOf(deletedFolder.path);
 
@@ -217,8 +217,8 @@ export default {
             return new Promise((resolve, reject) => {
                 this.$ajax({
                     task: 'explorer.saveContent',
-                    content,
                     path,
+                    content,
                 })
                 .then(res => {
                     resolve(res);
