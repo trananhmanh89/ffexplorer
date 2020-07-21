@@ -45,10 +45,6 @@ export default {
 </script>
 
 <style>
-.subhead-collapse {
-    display: none;
-}
-
 .container-fluid.container-main {
     padding-bottom: 0;
 }

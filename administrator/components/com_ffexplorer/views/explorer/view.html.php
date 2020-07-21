@@ -21,6 +21,13 @@ class FfexplorerViewExplorer extends HtmlView
 {
     public function display($tpl = null)
     {
+        $uri = Uri::getInstance();
+        $tmpl = $uri->getVar('tmpl');
+        if ($tmpl !== 'component') {
+            $uri->setVar('tmpl', 'component');
+            Factory::getApplication()->redirect($uri->toString());
+        }
+
         ToolbarHelper::title('FF Explorer');
         ToolbarHelper::preferences('com_ffexplorer');
 

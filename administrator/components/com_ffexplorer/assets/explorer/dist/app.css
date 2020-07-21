@@ -4744,9 +4744,6 @@
   border-left-color: rgba(255, 255, 255, 0.5);
   border-right-color: rgba(255, 255, 255, 0.5); }
 
-.subhead-collapse {
-  display: none;
-}
 .container-fluid.container-main {
   padding-bottom: 0;
 }
