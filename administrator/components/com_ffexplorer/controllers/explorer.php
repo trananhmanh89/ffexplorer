@@ -176,10 +176,11 @@ class FfexplorerControllerExplorer extends BaseController
     {
         $this->checkToken();
         $path = $this->input->getString('path');
-
-        if (!$path || !is_dir(JPATH_ROOT . $path)) {
+        if (!is_dir(JPATH_ROOT . $path)) {
             $this->response('error', 'empty path');
         }
+        
+        $path = $path ? $path : '/';
 
         $file = $this->input->files->get('file', array(), 'raw');
         $contentLength = (int) $file['size'];
