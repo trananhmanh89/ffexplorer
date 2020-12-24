@@ -10,7 +10,8 @@
             :close-on-press-escape="false"
             :append-to-body="true"
             :visible.sync="explorerDialog"
-            :before-close="handleClose">
+            :before-close="handleClose"
+            @opened="opened">
             <keep-alive>
                 <EApp v-if="app === 'explorer'"/>
             </keep-alive>
@@ -23,7 +24,8 @@
             :close-on-press-escape="false"
             :append-to-body="true"
             :visible.sync="databaseDialog"
-            :before-close="handleClose">
+            :before-close="handleClose"
+            @opened="opened">
             <keep-alive>
                 <DApp v-if="app === 'database'"/>
             </keep-alive>
@@ -72,6 +74,10 @@ export default {
     },
 
     methods: {
+        opened() {
+            jQuery(window).trigger('resize.ffexplorer');
+        },
+
         setApp(app) {
             if (app === 'explorer') {
                 this.explorerDialog = true;
