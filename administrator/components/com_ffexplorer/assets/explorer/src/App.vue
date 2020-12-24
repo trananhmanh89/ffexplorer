@@ -1,7 +1,7 @@
 <template>
     <div class="ffexplorer-app">
-        <el-button icon="el-icon-folder" @click="setApp('explorer')">File Manager</el-button>
-        <el-button icon="el-icon-coin" @click="setApp('database')">Database</el-button>
+        <el-button type="primary" icon="el-icon-folder" @click="setApp('explorer')">File Manager</el-button>
+        <el-button type="primary" icon="el-icon-coin" @click="setApp('database')">Database</el-button>
         <el-dialog
             top="1%"
             width="99%"
