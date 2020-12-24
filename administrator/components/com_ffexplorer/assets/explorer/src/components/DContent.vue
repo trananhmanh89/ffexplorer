@@ -64,6 +64,7 @@
         </div>
         <el-dialog
             width="60%"
+            :append-to-body="true"
             :close-on-click-modal="false"
             :close-on-press-escape="!saving"
             :show-close="!saving"
@@ -90,6 +91,7 @@
         </el-dialog>
         <el-dialog
             width="60%"
+            :append-to-body="true"
             :close-on-click-modal="false"
             :close-on-press-escape="!saving"
             :show-close="!saving"
@@ -128,6 +130,7 @@
         </el-dialog>
         <el-dialog
             width="50%"
+            :append-to-body="true"
             :close-on-click-modal="false"
             :close-on-press-escape="!saving"
             :show-close="!saving"
@@ -402,8 +405,9 @@ export default {
         setContentHeight: debounce(function() {
             const $ = jQuery;
             const wHeight = $(window).height();
-
-            this.height = (wHeight - $('.d-content-inner').offset().top - 35) + 'px';
+            if ($('.d-content-inner').length) {
+                this.height = (wHeight - $('.d-content-inner').offset().top - 35) + 'px';
+            }
         }, 100),
 
         initTable(name, page) {
@@ -507,6 +511,7 @@ export default {
             text-align: unset;
             max-width: 300px;
             padding: 3px 10px;
+            word-break: normal;
         }
 
         tr {

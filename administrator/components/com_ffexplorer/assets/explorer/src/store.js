@@ -17,21 +17,7 @@ export default new Vuex.Store({
 
     actions: {
         setApp({state, commit}, payload) {
-            let app = '';
-            if (payload) {
-                app = payload === 'database' ? 'database' : 'explorer';
-            } else {
-                const {hash} = location;
-                const query = hash.replace('#/', '');
-                app = query === 'database' ? 'database' : 'explorer';
-            }
-
-            if (app !== state.app) {
-                jQuery(window).off('resize.ffexplorer');
-            }
-
-            location.hash = '#/' + app;
-            commit('setApp', app);
+            commit('setApp', payload);
         }
     },
 
@@ -46,11 +32,6 @@ export default new Vuex.Store({
 
         setApp(state, app) {
             state.app = app;
-            state.selectedPath = '';
-            state.db_keyword = '';
-            state.activeTable = '';
-            Vue.set(state, 'lockedFiles', []);
-            Vue.set(state, 'history', []);
         },
 
         selectPath(state, path) {

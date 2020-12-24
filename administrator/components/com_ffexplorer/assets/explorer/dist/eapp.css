@@ -36,15 +36,15 @@
       cursor: pointer;
       user-select: none;
 }
-.e-folders .permission-config {
-    width: 100%;
+.permission-dialog .permission-config {
+  width: 100%;
 }
-.e-folders .permission-config td {
-      padding: 8px;
-      line-height: 18px;
-      text-align: left;
-      vertical-align: top;
-      border-bottom: 1px solid #ddd;
+.permission-dialog .permission-config td {
+    padding: 8px;
+    line-height: 18px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid #ddd;
 }
 .context-download-file {
   display: none;
@@ -63,9 +63,6 @@
     line-height: 40px;
     font-weight: bold;
     padding-bottom: 3px;
-}
-.e-sidebar .e-sidebar-header .e-sdiebar-app-select {
-      margin-bottom: 0;
 }
 
 .e-content-editor {

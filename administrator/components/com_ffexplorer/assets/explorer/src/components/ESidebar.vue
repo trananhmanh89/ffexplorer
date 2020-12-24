@@ -1,10 +1,6 @@
 <template>
     <div class="e-sidebar">
         <div class="e-sidebar-header">
-            <select class="e-sdiebar-app-select" v-model="app" @change="changeApp">
-                <option value="explorer">Explorer</option>
-                <option value="database">Database</option>
-            </select>
         </div>
         <ETree />
     </div>
@@ -43,9 +39,6 @@ export default {
         font-weight: bold;
         padding-bottom: 3px;
 
-        .e-sdiebar-app-select {
-            margin-bottom: 0;
-        }
     }
 }
 

@@ -47,9 +47,13 @@
             <li v-if="!isRoot" @click="openPermissionDialog">
                 <a>Permission</a>
             </li>
+            <li v-if="!isRoot" @click="copyPathToClipboard">
+                <a>Copy Relative Path</a>
+            </li>
         </vue-context>
         <el-dialog 
             title="Upload Files" 
+            :append-to-body="true"
             :destroy-on-close="true"
             :show-close="false"
             :close-on-click-modal="false"
@@ -72,8 +76,10 @@
             </span>
         </el-dialog>
         <el-dialog 
+            class="permission-dialog"
             title="Permission" 
             width="400px"
+            :append-to-body="true"
             :destroy-on-close="true"
             :show-close="false"
             :close-on-click-modal="false"
@@ -116,13 +122,13 @@
             <span slot="footer" class="dialog-footer">
                 <el-button 
                     size="small"
+                    :disabled="permissionLoading"
+                    @click="closePermissionDialog">Close</el-button>
+                <el-button 
+                    size="small"
                     type="primary"
                     :disabled="permissionLoading"
                     @click="savePermission">Save</el-button>
-                <el-button 
-                    size="small"
-                    :disabled="permissionLoading"
-                    @click="closePermissionDialog">Close</el-button>
             </span>
         </el-dialog>
         <el-dialog 
@@ -535,6 +541,15 @@ export default {
             });
         },
 
+        copyPathToClipboard() {
+            navigator.clipboard.writeText(this.contextItem.path).then(() => {
+                this.$message({
+                    type: 'success',
+                    message: 'Copied'
+                });
+            })
+        },
+
         onSuccessUpload(res, file, fileList) {
             if (res.error) {
                 alert(res.error);
@@ -910,10 +925,13 @@ export default {
         },
 
         setTreeHeight: debounce(function() {
+            
             const $ = jQuery;
             const wHeight = $(window).height();
 
-            this.treeHeight = (wHeight - $('.e-folders').offset().top - 35) + 'px';
+            if ($('.e-folders').length) {
+                this.treeHeight = (wHeight - $('.e-folders').offset().top - 35) + 'px';
+            }
         }, 100),
 
         getParent(root, path) {
@@ -984,7 +1002,9 @@ export default {
             user-select: none;
         }
     }
+}
 
+.permission-dialog {
     .permission-config {
         width: 100%;
 

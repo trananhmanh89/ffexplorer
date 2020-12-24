@@ -110,6 +110,7 @@
     text-align: unset;
     max-width: 300px;
     padding: 3px 10px;
+    word-break: normal;
 }
 .d-content .d-content-table tr {
     transition: background-color 300ms;

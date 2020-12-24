@@ -4750,4 +4750,22 @@
 .el-message-box__input input {
   height: 30px !important;
 }
+.ffexplorer-dialog.el-dialog__wrapper {
+  overflow: hidden;
+}
+.ffexplorer-dialog.el-dialog__wrapper .el-dialog {
+    margin-top: 1%;
+    width: 99%;
+    height: 97%;
+}
+.ffexplorer-dialog.el-dialog__wrapper .el-dialog__body {
+    padding: 0 20px;
+}
+.ffexplorer-dialog.el-dialog__wrapper .el-dialog__headerbtn {
+    top: 10px;
+    right: 10px;
+}
+.ffexplorer-dialog.el-dialog__wrapper .el-dialog__header {
+    padding: 0px 20px 10px;
+}
 

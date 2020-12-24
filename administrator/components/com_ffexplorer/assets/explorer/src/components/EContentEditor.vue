@@ -324,7 +324,9 @@ export default {
             const $ = jQuery;
             const wHeight = $(window).height();
 
-            this.editorHeight = (wHeight - $('.e-folders').offset().top - 35) + 'px';
+            if ($('.e-folders').length) {
+                this.editorHeight = (wHeight - $('.e-folders').offset().top - 35) + 'px';
+            }
         }, 100),
     }
 }

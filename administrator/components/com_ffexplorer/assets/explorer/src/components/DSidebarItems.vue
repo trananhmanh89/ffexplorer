@@ -83,7 +83,9 @@ export default {
             const $ = jQuery;
             const wHeight = $(window).height();
 
-            this.height = (wHeight - $('.d-sidebar-items').offset().top - 45) + 'px';
+            if ($('.d-sidebar-items').length) {
+                this.height = (wHeight - $('.d-sidebar-items').offset().top - 45) + 'px';
+            }
         }, 100),
 
         parseSize(size) {
