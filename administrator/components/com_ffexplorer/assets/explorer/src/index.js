@@ -11,7 +11,6 @@ import {
     Loading,
     Dialog,
     Upload,
-    Notification,
     Pagination,
 } from "element-ui";
 import lang from 'element-ui/lib/locale/lang/en';
@@ -38,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
     Vue.prototype.$confirm = MessageBox.confirm;
     Vue.prototype.$prompt = MessageBox.prompt;
     Vue.prototype.$message = Message;
-    Vue.prototype.$notify = Notification;
 
     Vue.prototype.$t = function(text) {
         return translate(text);

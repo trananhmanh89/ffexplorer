@@ -17,6 +17,8 @@
 		<files folder="admin">
 			<filename>ffexplorer.php</filename>
 			<filename>controller.php</filename>
+			<filename>access.xml</filename>
+			<filename>config.xml</filename>
 			<folder>assets</folder>
 			<folder>controllers</folder>
 			<folder>views</folder>
