@@ -3,7 +3,7 @@
         v-loading="loading">
         <div class="d-content-header">
             <div class="header-toolbar" v-if="table">
-                <div class="header-toolbar-col" style="margin-right: 10px;">
+                <div class="header-toolbar-col" style="margin-right: 10px; flex-grow: 1;">
                     <el-button 
                         size="small"
                         type="success"

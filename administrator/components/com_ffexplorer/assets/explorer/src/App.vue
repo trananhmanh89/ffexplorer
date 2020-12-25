@@ -17,7 +17,7 @@
         </el-dialog>
         <el-dialog
             width="99%"
-            class="ffexplorer-dialog"
+            class="ffexplorer-dialog database-app-dialog"
             :close-on-click-modal="false"
             :close-on-press-escape="false"
             :append-to-body="true"
@@ -101,12 +101,18 @@ export default {
     }
 
     .el-dialog__headerbtn {
-        top: 10px;
-        right: 10px;
+        top: 4px;
+        right: 4px;
     }
 
     .el-dialog__header {
         padding: 0px 20px 10px;
+    }
+}
+
+.ffexplorer-dialog.database-app-dialog {
+    .el-dialog__header {
+        padding: 20px 20px 10px;
     }
 }
 </style>
