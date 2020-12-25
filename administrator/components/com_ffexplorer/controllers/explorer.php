@@ -176,6 +176,7 @@ class FfexplorerControllerExplorer extends BaseController
     {
         $this->checkToken();
         $path = $this->input->getString('path');
+        $path = Path::clean($path, '/');
         if (!is_dir(JPATH_ROOT . $path)) {
             $this->response('error', 'empty path');
         }
@@ -220,6 +221,7 @@ class FfexplorerControllerExplorer extends BaseController
     {
         $this->checkToken();
         $path = $this->input->getString('path');
+        $path = Path::clean($path, '/');
         $content = $this->input->get('content', '', 'raw');
 
         if (!$path) {
@@ -243,6 +245,7 @@ class FfexplorerControllerExplorer extends BaseController
         $this->checkToken();
 
         $path = $this->input->getString('path');
+        $path = Path::clean($path, '/');
         if (!$path) {
             $this->response('error', 'empty path');
         }
@@ -386,6 +389,7 @@ class FfexplorerControllerExplorer extends BaseController
         $this->checkToken();
 
         $path = $this->input->getString('path');
+        $path = Path::clean($path, '/');
         if (!$path) {
             $this->response('error', 'empty path');
         }
@@ -446,6 +450,7 @@ class FfexplorerControllerExplorer extends BaseController
         $this->checkToken();
 
         $path = $this->input->getString('path');
+        $path = Path::clean($path, '/');
         if (!$path) {
             $this->response('error', 'empty path');
         }
