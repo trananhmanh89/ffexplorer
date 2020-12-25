@@ -35,14 +35,7 @@
                     </div>
                 </div>
             </div>
-            <el-pagination
-                layout="jumper, prev, pager, next"
-                :page-size="50"
-                :hide-on-single-page="true"
-                :current-page.sync="currentPage"
-                :total="total"
-                @current-change="changePage">
-            </el-pagination>
+            
         </div>
         <div class="d-content-inner" :style="{height, overflow: loading ? 'hidden' : 'auto'}">
             <table class="d-content-table">
@@ -63,6 +56,16 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+        <div style="margin-top: 5px; text-align: right;">
+            <el-pagination
+                layout="jumper, prev, pager, next"
+                :page-size="50"
+                :hide-on-single-page="true"
+                :current-page.sync="currentPage"
+                :total="total"
+                @current-change="changePage">
+            </el-pagination>
         </div>
         <el-dialog
             width="60%"
@@ -408,7 +411,7 @@ export default {
             const $ = jQuery;
             const wHeight = $(window).height();
             if ($('.d-content-inner').length) {
-                this.height = (wHeight - $('.d-content-inner').offset().top - 35) + 'px';
+                this.height = (wHeight - $('.d-content-inner').offset().top - 50) + 'px';
             }
         }, 100),
 

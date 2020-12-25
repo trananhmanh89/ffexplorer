@@ -3,7 +3,6 @@
         <el-button type="primary" icon="el-icon-folder" @click="setApp('explorer')">File Manager</el-button>
         <el-button type="primary" icon="el-icon-coin" @click="setApp('database')">Database</el-button>
         <el-dialog
-            top="1%"
             width="99%"
             class="ffexplorer-dialog"
             :close-on-click-modal="false"
@@ -17,7 +16,6 @@
             </keep-alive>
         </el-dialog>
         <el-dialog
-            top="1%"
             width="99%"
             class="ffexplorer-dialog"
             :close-on-click-modal="false"
@@ -92,9 +90,10 @@ export default {
     overflow: hidden;
 
     .el-dialog {
-        margin-top: 1%;
+        margin-top: 0 !important;
         width: 99%;
-        height: 97%;
+        height: 98%;
+        top: 1%;
     }
 
     .el-dialog__body {
