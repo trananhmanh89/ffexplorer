@@ -2,6 +2,9 @@ import Vue from 'vue';
 import App from './App.vue';
 import store from './store';
 import { 
+    Select,
+    Option,
+    Input,
     Button,
     Message, 
     MessageBox,
@@ -20,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     locale.use(lang)
 
+    Vue.use(Select);
+    Vue.use(Option);
+    Vue.use(Input);
     Vue.use(Button);
     Vue.use(Dialog);
     Vue.use(Upload);

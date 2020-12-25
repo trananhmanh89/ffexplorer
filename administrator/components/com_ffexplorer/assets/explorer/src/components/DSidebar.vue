@@ -1,16 +1,13 @@
 <template>
     <div class="d-sidebar">
         <div class="d-sidebar-header">
-            <select class="d-sdiebar-app-select" v-model="app" @change="changeApp">
-                <option value="explorer">Explorer</option>
-                <option value="database">Database</option>
-            </select>
-            <input 
+            <el-input
                 class="d-sidebar-table-search" 
                 type="text" 
                 placeholder="search table..."
+                size="small"
                 v-model="keyword"
-                @input="searchDb">
+                @input="searchDb" />
         </div>
         <DSidbarItems />
     </div>
@@ -39,7 +36,7 @@ export default {
 
         searchDb: debounce(function() {
             this.$store.commit('searchDb', this.keyword);
-        }, 300),
+        }),
     }
 }
 </script>
@@ -56,14 +53,6 @@ export default {
         font-weight: bold;
         padding-bottom: 3px;
         align-items: center;
-
-        .d-sdiebar-app-select {
-            margin-bottom: 0;
-        }
-
-        .d-sidebar-table-search {
-            margin: 0 0 0 5px;
-        }
     }
 }
 

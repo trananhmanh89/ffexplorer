@@ -3,33 +3,35 @@
         v-loading="loading">
         <div class="d-content-header">
             <div class="header-toolbar" v-if="table">
-                <div class="header-toolbar-col" style="margin-right: 20px;">
-                    <button 
-                        class="btn btn-success" 
-                        type="button"
-                        @click="openDialogInsert">Insert</button>
-                    <button 
-                        class="btn btn-danger" 
-                        type="button"
-                        @click="openDialogDelete">Delete</button>
+                <div class="header-toolbar-col" style="margin-right: 10px;">
+                    <el-button 
+                        size="small"
+                        type="success"
+                        @click="openDialogInsert">Insert</el-button>
+                    <el-button 
+                        size="small" 
+                        type="danger"
+                        @click="openDialogDelete">Delete</el-button>
                 </div>
                 <div class="header-toolbar-col filter-bar">
-                    <div class="filter-col" style="margin-right: 5px;">
-                        <select v-model="filterCol">
-                            <option value="">Select column</option>
-                            <option v-for="col in filterColumns" :key="col">{{col}}</option>
-                        </select>
-                        <select v-model="filterMethod">
-                            <option value="equal">=</option>
-                            <option value="like_both">like %...%</option>
-                            <option value="like_start">like ...%</option>
-                            <option value="like_end">like %...</option>
-                        </select>
-                        <input type="text" placeholder="value of column" v-model="filterValue">
+                    <div class="filter-col" style="margin-right: 5px; display: flex;">
+                        <el-select size="small" clearable v-model="filterCol">
+                            <el-option 
+                                v-for="col in filterColumns" 
+                                :key="col"
+                                :value="col" >{{col}}</el-option>
+                        </el-select>
+                        <el-select size="small" v-model="filterMethod">
+                            <el-option :key="'equal'" :value="'equal'"  :label="'='"></el-option>
+                            <el-option :key="'like_both'" :value="'like_both'" :label="'like %...%'"></el-option>
+                            <el-option :key="'like_start'" :value="'like_start'" :label="'like ...%'"></el-option>
+                            <el-option :key="'like_end'" :value="'like_end'" :label="'like %...'"></el-option>
+                        </el-select>
+                        <el-input size="small" placeholder="value of column" v-model="filterValue" />
                     </div>
                     <div class="filter-col">
-                        <button class="btn btn-primary" @click="doFilter">Filter</button>
-                        <button class="btn" @click="clearFilter">Clear</button>
+                        <el-button size="small" type="primary" @click="doFilter">Filter</el-button>
+                        <el-button size="small" @click="clearFilter">Clear</el-button>
                     </div>
                 </div>
             </div>
@@ -43,7 +45,7 @@
             </el-pagination>
         </div>
         <div class="d-content-inner" :style="{height, overflow: loading ? 'hidden' : 'auto'}">
-            <table class="d-content-table" border="1" bordercolor="#ddd">
+            <table class="d-content-table">
                 <thead>
                     <tr>
                         <th v-for="column in columns" :key="column.name">{{column.name}}</th>
@@ -459,7 +461,6 @@ export default {
 <style lang="scss">
 .d-content {
     flex: 1;
-    margin-top: 5px;
     margin-left: 10px;
     overflow: hidden;
 
@@ -507,11 +508,19 @@ export default {
     }
 
     .d-content-table {
+        position: relative;
+
         th {
             text-align: unset;
             max-width: 300px;
             padding: 3px 10px;
             word-break: normal;
+            position: sticky;
+            top: 0;
+            background-color: #eee;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+            border-right: solid 1px #ddd;
+            border-bottom: solid 1px #ddd;
         }
 
         tr {
@@ -529,6 +538,8 @@ export default {
                 text-overflow: ellipsis;
                 user-select: none;
                 transition: background-color 300ms;
+                border-right: solid 1px #ddd;
+                border-bottom: solid 1px #ddd;
 
                 &.selected {
                     background-color: rgba(103, 186, 224, 0.73);
@@ -538,39 +549,49 @@ export default {
         }
     }
 
-    .dialog-edit {
-        .el-dialog__body {
-            padding: 10px;
-        }
-        
-        .el-dialog__footer {
-            padding: 10px;
+    .el-select {
+        .el-input__inner {
+            background-color: unset;
         }
     }
 
-    .dialog-insert {
-        table {
-            width: 100%;
+    .el-button + .el-button {
+        margin-left: 0;
+    }
+}
 
-            > tr {
-                border-bottom: dashed 1px #ddd;
+.dialog-edit {
+    .el-dialog__body {
+        padding: 10px;
+    }
+    
+    .el-dialog__footer {
+        padding: 10px;
+    }
+}
 
-                th {
-                    text-align: unset;
-                    padding: 5px;
-                    white-space: nowrap;
-                }
+.dialog-insert {
+    table {
+        width: 100%;
 
-                td {
-                    padding: 5px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                    max-width: 300px;
+        > tr {
+            border-bottom: dashed 1px #ddd;
 
-                    input {
-                        margin: 0;
-                    }
+            th {
+                text-align: unset;
+                padding: 5px;
+                white-space: nowrap;
+            }
+
+            td {
+                padding: 5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: 300px;
+
+                input {
+                    margin: 0;
                 }
             }
         }
