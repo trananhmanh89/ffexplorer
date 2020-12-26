@@ -14,6 +14,7 @@ export default {
         return {
             editorHeight: '0px',
             current: '',
+            initedSnippet: false,
         }
     },
 
@@ -255,74 +256,84 @@ export default {
             });
         },
 
+        addSnippet(monaco) {
+            monaco.languages.registerCompletionItemProvider('php', {
+                provideCompletionItems: function(model, position) {
+                    const textUntilPosition = model.getValueInRange({startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column});
+                    const fragsA = textUntilPosition.split('<?php');
+                    const fragsB = textUntilPosition.split('?>');
+                    if (textUntilPosition.indexOf('<?php') === -1) {
+                        return;
+                    }
+
+                    if (fragsB.length === 1 || fragsB.pop().length > fragsA.pop().length) {
+                        const word = model.getWordUntilPosition(position);
+                        const range = {
+                            startLineNumber: position.lineNumber,
+                            endLineNumber: position.lineNumber,
+                            startColumn: word.startColumn,
+                            endColumn: word.endColumn
+                        };
+                        return {
+                            suggestions: [
+                                {
+                                    label: 'pre',
+                                    kind: monaco.languages.CompletionItemKind.Function,
+                                    documentation: "Print Result",
+                                    insertText: "echo '<pre>' . print_r(${1:true}) . '</pre>';",
+                                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                    range: range
+                                },
+                                {
+                                    label: 'd',
+                                    kind: monaco.languages.CompletionItemKind.Function,
+                                    documentation: "Print Result and Die",
+                                    insertText: "die('<pre>'.print_r(${1:true}, 1).'</pre>');",
+                                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                    range: range
+                                }
+                            ]
+                        };
+                    }
+                }
+            });
+
+            monaco.languages.registerCompletionItemProvider('javascript', {
+                provideCompletionItems: function(model, position) {
+                    const textUntilPosition = model.getValueInRange({startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column});
+                    const word = model.getWordUntilPosition(position);
+                    const range = {
+                        startLineNumber: position.lineNumber,
+                        endLineNumber: position.lineNumber,
+                        startColumn: word.startColumn,
+                        endColumn: word.endColumn
+                    };
+                    return {
+                        suggestions: [
+                            {
+                                label: 'cl',
+                                kind: monaco.languages.CompletionItemKind.Function,
+                                documentation: "console.log",
+                                insertText: "console.log(${1:true});",
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                range: range
+                            },
+                        ]
+                    };
+                }
+            });
+        },
+
         createEditor() {
             return new Promise((resolve, reject) => {
                 window.require(['vs/editor/editor.main'], () => {
                     const monaco = window.monaco;
+                    if (!this.initedSnippet) {
+                        this.addSnippet(monaco);
+                        this.initedSnippet = true;
+                    }
 
                     if (!editor) {
-                        monaco.languages.registerCompletionItemProvider('php', {
-                            provideCompletionItems: function(model, position) {
-                                const textUntilPosition = model.getValueInRange({startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column});
-                                const fragsA = textUntilPosition.split('<?php');
-                                const fragsB = textUntilPosition.split('?>');
-                                if (fragsB.length === 1 || fragsB.pop().length > fragsA.pop().length) {
-                                    const word = model.getWordUntilPosition(position);
-                                    const range = {
-                                        startLineNumber: position.lineNumber,
-                                        endLineNumber: position.lineNumber,
-                                        startColumn: word.startColumn,
-                                        endColumn: word.endColumn
-                                    };
-                                    return {
-                                        suggestions: [
-                                            {
-                                                label: 'pre',
-                                                kind: monaco.languages.CompletionItemKind.Function,
-                                                documentation: "Print Result",
-                                                insertText: "echo '<pre>' . print_r(${1:true}) . '</pre>';",
-                                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                                                range: range
-                                            },
-                                            {
-                                                label: 'd',
-                                                kind: monaco.languages.CompletionItemKind.Function,
-                                                documentation: "Print Result and Die",
-                                                insertText: "die('<pre>'.print_r(${1:true}, 1).'</pre>');",
-                                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                                                range: range
-                                            }
-                                        ]
-                                    };
-                                }
-                            }
-                        });
-
-                        monaco.languages.registerCompletionItemProvider('javascript', {
-                            provideCompletionItems: function(model, position) {
-                                const textUntilPosition = model.getValueInRange({startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column});
-                                const word = model.getWordUntilPosition(position);
-                                const range = {
-                                    startLineNumber: position.lineNumber,
-                                    endLineNumber: position.lineNumber,
-                                    startColumn: word.startColumn,
-                                    endColumn: word.endColumn
-                                };
-                                return {
-                                    suggestions: [
-                                        {
-                                            label: 'cl',
-                                            kind: monaco.languages.CompletionItemKind.Function,
-                                            documentation: "console.log",
-                                            insertText: "console.log(${1:true});",
-                                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                                            range: range
-                                        },
-                                    ]
-                                };
-                            }
-                        });
-
                         editor = monaco.editor.create(this.$el, {
                             model: null,
                         });

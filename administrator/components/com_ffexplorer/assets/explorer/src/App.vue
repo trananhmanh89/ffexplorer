@@ -11,9 +11,7 @@
             :visible.sync="explorerDialog"
             :before-close="handleClose"
             @opened="opened">
-            <keep-alive>
-                <EApp v-if="app === 'explorer'"/>
-            </keep-alive>
+            <EApp v-show="app === 'explorer'"/>
         </el-dialog>
         <el-dialog
             width="99%"
@@ -24,9 +22,7 @@
             :visible.sync="databaseDialog"
             :before-close="handleClose"
             @opened="opened">
-            <keep-alive>
-                <DApp v-if="app === 'database'"/>
-            </keep-alive>
+            <DApp v-show="app === 'database'"/>
         </el-dialog>
     </div>
 </template>
