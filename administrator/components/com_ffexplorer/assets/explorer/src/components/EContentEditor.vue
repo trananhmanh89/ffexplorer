@@ -376,6 +376,20 @@ export default {
                         });
                     });
 
+                    editor.addAction({
+                        id: 'copy-relative-path',
+                        label: 'Copy Relative Path',
+                        contextMenuGroupId: 'navigation',
+                        run: ed => {
+                            navigator.clipboard.writeText(this.current).then(() => {
+                                this.$message({
+                                    type: 'success',
+                                    message: 'Copied'
+                                });
+                            })
+                        }
+                    })
+
                     resolve();
                 });
             });
