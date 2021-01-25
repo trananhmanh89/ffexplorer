@@ -280,7 +280,7 @@ export default {
                                     label: 'pre',
                                     kind: monaco.languages.CompletionItemKind.Function,
                                     documentation: "Print Result",
-                                    insertText: "echo '<pre>' . print_r(${1:true}) . '</pre>';",
+                                    insertText: "echo '<pre>' . print_r(${1:true}, 1) . '</pre>';",
                                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                                     range: range
                                 },
