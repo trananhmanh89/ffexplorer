@@ -8,6 +8,7 @@ node_modules
 
 # files and folders
 !/.gitignore
+!/vetur.config.js
 !/administrator
 /administrator/*
 !/administrator/components/
