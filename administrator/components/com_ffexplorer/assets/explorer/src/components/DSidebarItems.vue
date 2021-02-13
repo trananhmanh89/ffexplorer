@@ -7,7 +7,7 @@
                 :key="item.name"
                 :class="{active: item.name === activeTable}"
                 @click="selectTable(item.name)">
-                <td>{{item.name}}</td>
+                <td class="item-label">{{item.name}}</td>
                 <td class="item-size">
                     <span>{{parseSize(item.size)}}</span>
                     <div class="item-size-percent" :style="{width: getSizePercent(item.size) + '%' }"></div>
@@ -167,6 +167,10 @@ export default {
                 z-index: 0;
                 transition: background-color 300ms;
             }
+        }
+
+        .item-label {
+            word-break: normal;
         }
     }
 }
