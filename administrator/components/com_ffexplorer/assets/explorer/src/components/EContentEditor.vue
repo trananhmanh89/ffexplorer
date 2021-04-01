@@ -300,7 +300,6 @@ export default {
 
             monaco.languages.registerCompletionItemProvider('javascript', {
                 provideCompletionItems: function(model, position) {
-                    const textUntilPosition = model.getValueInRange({startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column});
                     const word = model.getWordUntilPosition(position);
                     const range = {
                         startLineNumber: position.lineNumber,

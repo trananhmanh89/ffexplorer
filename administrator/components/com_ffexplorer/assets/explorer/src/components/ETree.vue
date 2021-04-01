@@ -322,7 +322,7 @@ export default {
             frags.pop();
             const path = (frags.length === 1 ? '\\' : '') + frags.join('\\');
 
-            this.$prompt('', 'Extract to ...', {
+            this.$prompt('', 'Relative path to extract:', {
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
                 inputPattern: /^[^,:\*\?"<>|]+$/,
