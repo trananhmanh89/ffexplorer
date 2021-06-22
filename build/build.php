@@ -47,6 +47,6 @@ foreach ($languages as $lang) {
 }
 
 $archive = new Zip();
-$archive->create(JPATH_ROOT . '/ffexplorer.zip', $contents);
+$archive->create(JPATH_ROOT . '/build/ffexplorer.zip', $contents);
 
 echo "\n===> build done <===\n";
