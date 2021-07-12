@@ -240,7 +240,7 @@ export default {
 
         EventBus.$on('openImage', ({name, path}) => {
             Vue.set(this, 'previewImage', {
-                path: this.rootUri + path,
+                path: this.rootUri + path.substring(1),
                 name,
             });
             
