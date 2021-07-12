@@ -1,7 +1,5 @@
 # global
 _temp.*
-package-lock.json
-composer.lock
 node_modules
 
 /*
