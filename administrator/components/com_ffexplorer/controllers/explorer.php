@@ -255,8 +255,13 @@ class FfexplorerControllerExplorer extends BaseController
             $this->response('error', 'file not existed');
         }
 
-        $content = file_get_contents($file);
-        $this->response('content', $content);
+        $mime = mime_content_type($file);
+        if (strpos($mime, 'text') === 0 || $mime === 'inode/x-empty') {
+            $content = file_get_contents($file);
+            $this->response('content', $content);
+        } else {
+            $this->response('error', 'Could not open this file');
+        }
     }
 
     public function explodeFolder()
