@@ -28,10 +28,13 @@
 </template>
 
 <script>
+import EApp from './components/EApp.vue';
+import DApp from './components/DApp.vue';
+
 export default {
     components: {
-        EApp: () => import(/* webpackChunkName: "eapp" */ './components/EApp.vue'),
-        DApp: () => import(/* webpackChunkName: "dapp" */ './components/DApp.vue'),
+        EApp,
+        DApp,
     },
 
     data() {

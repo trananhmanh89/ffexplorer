@@ -14,7 +14,6 @@ module.exports = env => {
 
         output: {
             filename: 'app.js',
-            chunkFilename: '[name].js',
             path: path.resolve(__dirname, 'dist'),
         },
 
@@ -34,47 +33,35 @@ module.exports = env => {
                 },
                 {
                     test: /\.(ttf|woff)$/i,
-                    use: [
-                        {
-                            loader: 'file-loader',
-                            options: {
-                                name: '[name].[ext]',
-                                outputPath: 'fonts',
-                            },
-                        },
-                    ],
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'fonts/[name][ext]'
+                    }
                 },
                 {
                     test: /\.m?js$/,
-                    use: {
-                        loader: 'babel-loader',
-                        options: {
-                            plugins: [
-                                [
-                                    'component',
-                                    {
-                                        libraryName: 'element-ui',
-                                        styleLibraryName: 'theme-chalk',
-                                    },
-                                ],
+                    loader: 'babel-loader',
+                    options: {
+                        plugins: [
+                            [
+                                'component',
+                                {
+                                    libraryName: 'element-ui',
+                                    styleLibraryName: 'theme-chalk',
+                                },
                             ],
-                        },
+                        ],
                     },
                 },
             ]
         },
-        
-        optimization: {
-            splitChunks: {
-                automaticNameDelimiter: '-',
-            }
-        },
+
+
 
         plugins: [
             new VueLoaderPlugin(),
             new MiniCssExtractPlugin({
                 filename: 'app.css',
-                chunkFilename: '[name].css',
             }),
         ],
     }
