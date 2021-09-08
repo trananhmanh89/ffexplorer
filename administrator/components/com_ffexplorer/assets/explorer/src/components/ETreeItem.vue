@@ -62,7 +62,7 @@ export default {
                 return false;
             }
 
-            const ext = pieces[pieces.length - 1];
+            const ext = pieces.pop().toLowerCase();
             const imageExt = ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'];
 
             if (imageExt.indexOf(ext) !== -1) {
