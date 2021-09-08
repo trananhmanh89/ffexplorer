@@ -219,7 +219,7 @@ class FfexplorerControllerDb extends BaseController
         }
     }
 
-    protected function response($type = 'success', $data)
+    protected function response($type = 'success', $data = array())
     {
         die(@json_encode(array($type => $data)));
     }
