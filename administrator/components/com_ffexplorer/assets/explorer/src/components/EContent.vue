@@ -181,7 +181,7 @@ export default {
             }
 
             if (current.status === 'dirty') {
-                const ok = confirm("Your content haven't save yet. Do you want to close without saving?");
+                const ok = confirm("Your content haven't saved yet. Do you want to close without saving?");
                 if (!ok) {
                     return;
                 }

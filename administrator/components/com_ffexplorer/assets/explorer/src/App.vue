@@ -4,7 +4,7 @@
         <el-button type="primary" icon="el-icon-coin" @click="setApp('database')">Database</el-button>
         <el-dialog
             width="99%"
-            class="ffexplorer-dialog"
+            class="ffexplorer-dialog explorer-app-dialog"
             :close-on-click-modal="false"
             :close-on-press-escape="false"
             :append-to-body="true"
