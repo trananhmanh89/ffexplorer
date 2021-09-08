@@ -30,12 +30,9 @@ class FfexplorerViewExplorer extends HtmlView
 
         $xml = simplexml_load_file(JPATH_ADMINISTRATOR . '/components/com_ffexplorer/ffexplorer.xml');
 
+        HTMLHelper::script('administrator/components/com_ffexplorer/assets/explorer/dist/app.js', array('version' => (string) $xml->version));
+        HTMLHelper::stylesheet('administrator/components/com_ffexplorer/assets/explorer/dist/app.css', array('version' => (string) $xml->version));
         $doc = $this->document;
-        $doc->addScript('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs/loader.min.js');
-        $doc->addScriptDeclaration(";window.require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs' }});");
-
-        $doc->addScript(Uri::root(true) . '/administrator/components/com_ffexplorer/assets/explorer/dist/app.js?' . (string) $xml->version);
-        $doc->addStyleSheet(Uri::root(true) . '/administrator/components/com_ffexplorer/assets/explorer/dist/app.css?' . (string) $xml->version);
         $doc->addScriptOptions('ffexplorer_max_file_size_upload', ini_get('upload_max_filesize'));
 
         $csrfToken = Session::getFormToken();

@@ -92,8 +92,27 @@ export default {
             this.resizeEditorLayout();
         });
 
-        this.createEditor().then(() => {
-            this.resizeEditorLayout();
+        setTimeout(() => {
+            const loading = this.$loading({
+                lock: true,
+                text: 'Refreshing',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)',
+                customClass: 'compress-loading'
+            });
+
+            this.loader().then(() => {
+                window.require.config({
+                    paths: {
+                        'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs'
+                    }
+                });
+
+                this.createEditor().then(() => {
+                    loading.close();
+                    this.resizeEditorLayout();
+                });
+            })
         });
 
         setTimeout(() => {
@@ -102,6 +121,21 @@ export default {
     },
 
     methods: {
+        loader() {
+            return new Promise((resolve, reject) => {
+                const head = document.getElementsByTagName('head')[0]
+                const script = document.createElement('script')
+
+                script.type = 'text/javascript'
+                script.addEventListener('load', function () {
+                    resolve(script)
+                })
+                script.src = Joomla.getOptions('system.paths').root + '/administrator/components/com_ffexplorer/assets/monaco/loader.js';
+
+                head.appendChild(script)
+            });
+        },
+
         async initEditor(file, force) {
             if (!editor) {
                 await this.createEditor();
