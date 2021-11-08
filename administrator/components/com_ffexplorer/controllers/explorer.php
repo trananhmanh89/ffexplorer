@@ -255,7 +255,10 @@ class FfexplorerControllerExplorer extends BaseController
             $this->response('error', 'file not existed');
         }
 
-        $mime = mime_content_type($file);
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $file);
+        finfo_close($finfo);
+
         if (strpos($mime, 'text') === 0 || $mime === 'inode/x-empty') {
             $content = file_get_contents($file);
             $this->response('content', $content);
