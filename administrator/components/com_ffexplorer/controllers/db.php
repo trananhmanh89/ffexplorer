@@ -145,7 +145,11 @@ class FfexplorerControllerDb extends BaseController
         $query = $this->getListQuery($name)->select('COUNT(*)');
         $total = $db->setQuery($query)->loadResult();
 
-        $query = $this->getListQuery($name)->select('*');
+        $cols = array_map(function($col) {
+            return $col->name;
+        }, $columns);
+        $query = $this->getListQuery($name)->select($db->qn($cols));
+
         $limit = 50;
         $offset = $limit * ($page - 1);
         $items = $db->setQuery($query, $offset, $limit)->loadObjectList();
