@@ -24,7 +24,7 @@ class FfexplorerControllerDb extends BaseController
 
         $db = Factory::getDbo();
         $query = $db->getQuery(true)->delete($db->qn($table));
-        
+
         foreach ($condition as $k => $v) {
             $query->where($db->qn($k) . '=' . $db->q($v));
         }
@@ -63,7 +63,7 @@ class FfexplorerControllerDb extends BaseController
             ->insert($db->qn($table))
             ->columns($db->qn($columns))
             ->values(implode(',', $values));
-       
+
         try {
             $db->setQuery($query)->execute();
             $this->response('success', true);
@@ -89,7 +89,7 @@ class FfexplorerControllerDb extends BaseController
         $query = $db->getQuery(true)
             ->update($db->qn($table))
             ->set($db->qn($column) . '=' . $db->q($value));
-        
+
         $where = array();
         foreach ($condition as $k => $v) {
             $where[] = $db->qn($k) . '=' . $db->q($v);
@@ -102,7 +102,6 @@ class FfexplorerControllerDb extends BaseController
         } catch (Exception $e) {
             $this->response('error', $e->getMessage());
         }
-
     }
     public function initTable()
     {
@@ -122,7 +121,7 @@ class FfexplorerControllerDb extends BaseController
             FROM information_schema.tables
             WHERE table_schema = '$dbName' 
             AND table_name = '$name'";
-        
+
         $existed = $db->setQuery($query)->loadResult();
         if (!$existed) {
             $this->response('error', 'Table is not existed');
@@ -135,17 +134,13 @@ class FfexplorerControllerDb extends BaseController
                         `EXTRA` AS extra
             FROM information_schema.`columns`
             WHERE `table_schema` = '$dbName' AND `table_name` = '$name'";
-        
+
         $columns = $db->setQuery($query)->loadObjectList();
-        $columns = array_map(function($col) {
-            $col->default = trim($col->default, "'");
-            return $col;
-        }, $columns);
-        
+
         $query = $this->getListQuery($name)->select('COUNT(*)');
         $total = $db->setQuery($query)->loadResult();
 
-        $cols = array_map(function($col) {
+        $cols = array_map(function ($col) {
             return $col->name;
         }, $columns);
         $query = $this->getListQuery($name)->select($db->qn($cols));
@@ -153,7 +148,7 @@ class FfexplorerControllerDb extends BaseController
         $limit = 50;
         $offset = $limit * ($page - 1);
         $items = $db->setQuery($query, $offset, $limit)->loadObjectList();
-        
+
         $data = array(
             'columns' => $columns,
             'total' => $total,
@@ -185,7 +180,7 @@ class FfexplorerControllerDb extends BaseController
                 case 'like_end':
                     $query->where($db->qn($filterCol) . ' LIKE ' . $db->q('%' . $filterValue));
                     break;
-                
+
                 default:
                     $query->where($db->qn($filterCol) . '=' . $db->q($filterValue));
                     break;
