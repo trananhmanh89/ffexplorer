@@ -10,12 +10,11 @@
 
 use Joomla\Archive\Archive;
 use Joomla\Archive\Zip;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 use Joomla\CMS\Helper\MediaHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\CMS\String\PunycodeHelper;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -107,10 +106,10 @@ class FfexplorerControllerExplorer extends BaseController
         }
 
         $target = $info['dirname'] . '/' . $info['filename'] . '.zip';
-        if (File::exists($target)) {
+        if (is_file($target)) {
             for ($i=1; $i < 100; $i++) { 
                 $target = $info['dirname'] . '/' . $info['filename'] . '(' . $i . ')' . '.zip';
-                if (!File::exists($target)) {
+                if (!is_file($target)) {
                     break;
                 }
             }
@@ -200,7 +199,7 @@ class FfexplorerControllerExplorer extends BaseController
 
         $file['filepath'] = JPATH_ROOT . $path . '/' . $file['name'];
 
-        if (File::exists($file['filepath']))
+        if (is_file($file['filepath']))
         {
             $this->response('error', 'File ' . $file['name'] . ' existed');
         }
@@ -229,7 +228,7 @@ class FfexplorerControllerExplorer extends BaseController
         }
 
         $file = JPATH_ROOT . $path;
-        if (!File::exists($file)) {
+        if (!is_file($file)) {
             $this->response('error', 'file not existed');
         }
 
@@ -251,7 +250,7 @@ class FfexplorerControllerExplorer extends BaseController
         }
 
         $file = JPATH_ROOT . $path;
-        if (!File::exists($file)) {
+        if (!is_file($file)) {
             $this->response('error', 'file not existed');
         }
 
@@ -259,7 +258,7 @@ class FfexplorerControllerExplorer extends BaseController
         $mime = finfo_file($finfo, $file);
         finfo_close($finfo);
 
-        if (strpos($mime, 'text') === 0 || $mime === 'inode/x-empty') {
+        if (strpos($mime, 'text') !== false || strpos($mime, 'x-empty') !== false) {
             $content = file_get_contents($file);
             $this->response('content', $content);
         } else {
@@ -319,7 +318,7 @@ class FfexplorerControllerExplorer extends BaseController
         }
 
         $file = JPATH_ROOT . $path . '/' . $name;
-        if (File::exists($file)) {
+        if (is_file($file)) {
             $this->response('error', 'File is already existed');
         }
 
@@ -429,13 +428,13 @@ class FfexplorerControllerExplorer extends BaseController
             $this->response('error', 'empty');
         }
 
-        if (!File::exists(JPATH_ROOT . $oldPath)) {
+        if (!is_file(JPATH_ROOT . $oldPath)) {
             $this->response('error', 'File not found');
         }
 
         $info = pathinfo($oldPath);
         $file = JPATH_ROOT . $info['dirname'] . '/' . $newName;
-        if (File::exists($file)) {
+        if (is_file($file)) {
             $this->response('error', 'File is already existed');
         }
 
@@ -463,7 +462,7 @@ class FfexplorerControllerExplorer extends BaseController
             $this->response('error', 'empty path');
         }
 
-        if (File::exists(JPATH_ROOT . $path)) {
+        if (is_file(JPATH_ROOT . $path)) {
             try {
                 if(File::delete(JPATH_ROOT . $path)) {
                     $this->response('success', 'deleted');
