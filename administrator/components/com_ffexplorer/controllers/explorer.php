@@ -31,8 +31,8 @@ class FfexplorerControllerExplorer extends BaseController
             $this->response('error', 'Path not found');
         }
 
-        $target = JPATH_ROOT . $target;
-        $source = JPATH_ROOT . $source;
+        $target = Path::clean(JPATH_ROOT . $target);
+        $source = Path::clean(JPATH_ROOT . $source);
         if (!is_file($source) || !is_dir($target)) {
             $this->response('error', 'Path not found');
         }
@@ -342,8 +342,8 @@ class FfexplorerControllerExplorer extends BaseController
             die(json_encode(array('error' => 'empty')));
         }
 
-        $folder = JPATH_ROOT . $path . '/' . $name;
-        if (Folder::exists($folder)) {
+        $folder = Path::clean(JPATH_ROOT . $path . '/' . $name);
+        if (is_dir($folder)) {
             $this->response('error', 'Folder is already existed');
         }
 
@@ -367,13 +367,13 @@ class FfexplorerControllerExplorer extends BaseController
             $this->response('error', 'empty');
         }
 
-        if (!Folder::exists(JPATH_ROOT . $oldPath)) {
+        if (!is_dir(JPATH_ROOT . $oldPath)) {
             $this->response('error', 'Folder not found');
         }
 
         $info = pathinfo($oldPath);
         $folder = JPATH_ROOT . $info['dirname'] . '/' . $newName;
-        if (Folder::exists($folder)) {
+        if (is_dir($folder)) {
             $this->response('error', 'Folder is already existed');
         }
 
@@ -401,7 +401,7 @@ class FfexplorerControllerExplorer extends BaseController
             $this->response('error', 'empty path');
         }
 
-        if (Folder::exists(JPATH_ROOT . $path)) {
+        if (is_dir(JPATH_ROOT . $path)) {
             try {
                 if(Folder::delete(JPATH_ROOT . $path)) {
                     $this->response('success', 'deleted');
