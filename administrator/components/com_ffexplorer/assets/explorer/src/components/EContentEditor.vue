@@ -101,10 +101,12 @@ export default {
                 customClass: 'compress-loading'
             });
 
+            const baseUrl = Joomla.getOptions('system.paths').baseFull;
+
             this.loader().then(() => {
                 window.require.config({
                     paths: {
-                        'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs'
+                        'vs': baseUrl + 'components/com_ffexplorer/assets/monaco/min/vs'
                     }
                 });
 
@@ -225,19 +227,28 @@ export default {
 
         parseLanguage(name) {
             const langs = {
+/*************  ✨ Windsurf Command 🌟  *************/
                 js: 'javascript',
                 php: 'php',
                 scss: 'scss',
                 css: 'css',
+                gitignore: 'markdown',
                 less: 'less',
                 sql: 'mysql',
                 ini: 'ini',
                 xml: 'xml',
                 html: 'html',
+                ini: 'ini',
+                js: 'javascript',
                 svg: 'html',
                 json: 'json',
+                less: 'less',
                 md: 'markdown',
+                php: 'php',
+                scss: 'scss',
+                sql: 'mysql',
                 gitignore: 'markdown',
+/*******  3e7cddcf-6fa6-4230-8e5c-af2974c6979e  *******/
             };
 
             if (name.indexOf('.') === -1) {
