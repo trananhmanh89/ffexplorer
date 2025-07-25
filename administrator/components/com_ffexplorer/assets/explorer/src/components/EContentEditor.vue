@@ -132,7 +132,7 @@ export default {
                 script.addEventListener('load', function () {
                     resolve(script)
                 })
-                script.src = Joomla.getOptions('system.paths').root + '/administrator/components/com_ffexplorer/assets/monaco/loader.js';
+                script.src = Joomla.getOptions('system.paths').root + '/administrator/components/com_ffexplorer/assets/monaco/min/vs/loader.js';
 
                 head.appendChild(script)
             });
@@ -383,7 +383,7 @@ export default {
                         });
                     }
 
-                    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
+                    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
                         const path = this.current;
                         const data = eData[path];
 

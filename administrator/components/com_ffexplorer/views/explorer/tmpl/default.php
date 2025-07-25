@@ -18,8 +18,6 @@ defined('_JEXEC') or die('Restricted access');
     * Mr Meo: <a href="https://github.com/trananhmanh89/ffexplorer" target="_blank">https://github.com/trananhmanh89/ffexplorer</a>
 </div>
 <br>
-<script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script>
-<script type='text/javascript'>
-    kofiwidget2.init('Support Me on Ko-fi', '#29abe0', 'I3I71FSC5');
-    kofiwidget2.draw();
-</script>
+<a href='https://ko-fi.com/I3I71FSC5' target='_blank'>
+    <img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+</a>
